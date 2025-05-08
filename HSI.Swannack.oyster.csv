@@ -1,0 +1,11 @@
+cultch.per,cultch.SIV,sal.mean.spawn.ppt,sal.mean.spawn.SIV,sal.min.ann.ppt,sal.min.ann.SIV,sal.mean.ann.ppt,sal.mean.ann.SIV
+0,0,0,0,0,0,0,0
+1,1,5,0,2,0,5,0
+,,10,0.3,4,0.05,10,1
+,,15,0.65,6,0.5,15,1
+,,18,1,8,1,20,0.6
+,,22,1,50,1,25,0.25
+,,30,0.3,,,30,0.1
+,,35,0.1,,,40,0
+,,40,0,,,50,0
+,,50,0,,,,
