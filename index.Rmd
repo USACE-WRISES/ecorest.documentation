@@ -1,7 +1,7 @@
 ---
 title: "ecorest: Generic Platform for Index-Based Modeling"
 author: "S. Kyle McKay, Darixa D. Hernández-Abrams, Kiara C. Cushway, and Todd M. Swannack"
-date: "Feb 24, 2025"
+date: "April 1st, 2026"
 output:
   html_document:
     toc: yes
@@ -15,6 +15,7 @@ output:
 ---
 ```{r options, echo=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE) 
+library(ecorest)
 ```
 
 
@@ -169,19 +170,19 @@ This data frame contains metadata for 349 U.S. Fish and Wildlife Service Habitat
 
 **Insert a table for metadata example**
 ```{r}
-# #Variable descriptions from R-package
-# Table3 <- data.frame(c("Model name", "Model specifications", "Scientific nomenclature of modeled taxa", "Geographic range of organism", "Type of habitat", "Citation of original model", "Conditions under which model may be applied", "Link to original individual model source", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Suitability index values for each organism specific condition", "Food component equation", "Cover component equation", "Cover-food component equation", "Winter food component", "Water component", "Cover breeding component", "Cover nesting component", "Water quality component", "Reproduction component", "Cover reproduction component", "Disturbance component", "Other component", "Larval component", "Embryo and larval component", "Embryo component", "Juvenile component", "Fry component", "Spawning component", "Adult component", "Island component", "Non-island component", "Winter cover food component", "Topography component", "Juvenile adult component", "HSI overarching model equation in R syntax"))
-# 
+# Variable descriptions from R-package
+Table3 <- data.frame(c("Model name", "Model specifications", "Scientific nomenclature of modeled taxa", "Geographic range of organism", "Type of habitat", "Citation of original model", "Conditions under which model may be applied", "Link to original individual model source", rep("Suitability index values for each organism-specific condition", 32), "Food component equation", "Food/reproduction component equation", "Roosting-nesting component equation", "Cover component equation", "Cover-roosting component equation","Cover-reproduction-food component equation", "Cover-food component equation","Cover-food shrub component equation", "Cover-food herbaceous component equation", "Winter food component equation", "Summer food component equation","Fall food component equation", "Water component equation", "Cover-breeding component equation", "Brood component equation", "Nest component equation", "Nest-brood-cover component equation", "Cover nesting component equation", "Pair habitat component equation", "Water quality component equation", "Reproduction component equation", "Cover reproduction component equation", "Disturbance component equation", "Other component equation", "Larval component equation", "Embryo and larval component equation", "Embryo component equation", "Juvenile component equation", "Fry component equation", "Spawning component equation", "Adult component equation", "Island component equation", "Interspersion component equation", "Non-island component equation", "Winter cover food component equation", "Summer food brood component equation"," Fall spring winter food component equation", "Spring food component equation", "Winter cover component equation", "Fall to spring cover component equation", "Substrate-suspended solids component equation", "Topography component equation", "Temperature component equation", "Juvenile adult component equation", "Composite HSI model equation in R syntax"))
+
 # #Variable names from R-package
-# Table3$names <- colnames(HSImetadata)
-# 
+Table3$names <- colnames(HSImetadata)
+ 
 # #Isolate barred owl model on row 32 (which(HSImetadata$model=="barredowl"))
-# Table3$barred <- paste(t(HSImetadata[32,]))
-# 
-# #Send pretty table output
-# colnames(Table3) <- c("Description", "HSImetadata() Field", "Barred Owl Model Value")
-# rownames(Table3) <- NULL
-# knitr::kable(Table3, caption="**Table 3. Example of model information embedded within HSImetadata(): Barred Owl (Allen 1987).**")
+Table3$barred <- paste(t(HSImetadata[32,]))
+
+# #end pretty table output
+colnames(Table3) <- c("Description", "HSImetadata() Field", "Barred Owl Model Value")
+rownames(Table3) <- NULL
+knitr::kable(Table3, caption="**Table 3. Example of model information embedded within HSImetadata(): Barred Owl (Allen 1987).**")
 
 ```
 
@@ -196,10 +197,10 @@ Plots suitability index curves relative to multiple variables.
 
 Inputs are:  
 
-* `SI`: a matrix of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.  
+* `SI`: a matrix or data frame of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.  
 * `figure.name`: output figure file name structured as "filename.jpeg".
 
-Function returns a multi-panel *.jpeg figure showing all suitability curves (e.g., Figure 2).
+The `HSIplotter` function returns a multi-panel *.jpeg figure showing all suitability curves (e.g., Figure 2).
 
 ```{r echo=TRUE}
 HSIplotter
@@ -216,10 +217,10 @@ Computes suitability indices given a set of suitability curves and project-speci
 
 Inputs are:  
 
-* `SI`: a matrix of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.   
-* `input.proj`: numeric or categorical vector of application-specific input parameters associated with the suitability curve data from SI. Excluded variables should be entered as 'NA.'
+* `SI`: a matrix or data frame of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.   
+* `input.proj`: a numeric or categorical vector of application-specific input parameters associated with the suitability curve data from SI. Excluded variables should be entered as 'NA.'
 
-Function returns a vector of the suitability index values that match given user inputs. Values are returned as equal to the extreme of a range if inputs are outside of model range.
+The `SIcalc` function returns a vector of suitability index values between zero and one corresponding to the given user inputs. 
 
 ```{r echo=TRUE}
 SIcalc
@@ -228,13 +229,13 @@ SIcalc
 
 *`HSIarimean(x)`*
 
-Uses arithmetic mean to combine suitability indices into an overarching habitat suitability index.
+Uses an arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
 
 Inputs are:
 
-* `x`: a vector of suitability indices.  
+* `x`: a vector of suitability indices ranging from zero to one.  
 
-Function returns a value of habitat quality from 0 to 1 ignoring NA values.
+The `HSIarimean` function returns a value of habitat quality between zero and one (ignoring NA values).
 
 ```{r echo=TRUE}
 HSIarimean
@@ -247,10 +248,10 @@ Uses a weighted arithmetic mean to combine suitability indices into an overarchi
 
 Inputs are:
 
-* `x`: a vector of suitability indices.  
-* `w`: a vector of weights (0 to 1 values that must sum to one).  
+* `x`: a vector of suitability indices ranging from zero to one.  
+* `w`: a vector of weights ranging from zero to one (must sum to one).  
 
-Function returns a value of habitat quality from 0 to 1 ignoring NA values.
+The `HSIwarimean` function returns a value of habitat quality between zero and one (ignoring NA values).
 
 
 ```{r echo=TRUE}
@@ -264,9 +265,9 @@ Uses geometric mean to combine suitability indices into an overarching habitat s
 
 Inputs are:
 
-* `x`: a vector of suitability indices.  
+* `x`: a vector of suitability indices ranging from zero to one.  
 
-Function returns a value of habitat quality from 0 to 1 ignoring NA values.
+The `HSIgeomean` function returns a value of habitat quality between zero and one (ignoring NA values).
 
 
 ```{r echo=TRUE}
@@ -280,9 +281,9 @@ Uses the minimum of given suitability indices to calculate an overarching habita
 
 Inputs are:
 
-* `x`: a vector of suitability indices.  
+* `x`: a vector of suitability indices ranging from zero to one.  
 
-Function returns a value of habitat quality from 0 to 1 ignoring NA values.
+The `HSImin` function returns a value of habitat quality between zero and one (ignoring NA values).
 
 
 ```{r echo=TRUE}
@@ -297,11 +298,11 @@ Computes a habitat suitability index based on equations specified in USFWS habit
 Inputs are:
 
 * `HSImodelname`: a character string in quotations that must match an existing model name in `HSImetadata`.  
-* `SIV`: a vector of suitability index values used in the model specified in `HSImodelname`.  
+* `SIV`: a vector of suitability index values ranging from zero to one used in the model specified in `HSImodelname`.  
 * `HSImetadata`: a data frame of HSI model metadata within the `ecorest` package. 
-* `exclude`: a list of character strings specifying components to be excluded from calculations. See `HSImetadata` for a list of available model components.
+* `exclude`: a vector of character strings specifying components to be excluded from calculations. See `HSImetadata` for a list of available model components. Non-NULL 'exclude' inputs are only applicable to models that explicitly provide instructions for use in the note column of HSImetadata.
 
-Function returns a numeric of the habitat suitability index ranging from 0 to 1.
+The `HSIeqtn` function returns a numeric estimate of habitat quality between zero and one.
 
 
 ```{r echo=TRUE}
@@ -311,16 +312,16 @@ HSIeqtn
 
 *`HUcalc(SI.out, habitat.quantity, HSIfunc, ...)`*
 
-Computes habitat units given a set of suitability indices, a habitat suitability index equation, and habitat quantity.
+Computes habitat units given a set of suitability indices ranging from zero to one, a habitat suitability index equation, and habitat quantity.
 
 Inputs are:
 
-* `SI.out`: a vector of application-specific suitability indices, which can be produced from `SIcalc` or other functions.  
-* `habitat.quantity`: a numeric of habitat size associated with these suitability indices (i.e., length, area, or volume).  
-* `HSIfunc`: a function for combination of the suitability indices.  
+* `SI.out`: a vector of application-specific suitability indices between zero and one, which can be produced from `SIcalc` or other functions.  
+* `habitat.quantity`: a numeric value of habitat size associated with these suitability indices (i.e., length, area, or volume).  
+* `HSIfunc`: a function used to combine suitability indices into a composite habitat suitability index (HSI score) (e.g., ecorest functions like HSIarimean or HSIgeomean or functions outside ecorest like max or mean).  
 * `...`: optional arguments to `HSIfunc`.  
 
-Function returns a vector of habitat quality, habitat quantity, and index units (quantity times quality).
+The `HUcalc` function returns a vector of habitat quality, habitat quantity, and index units (quantity times quality).
 
 
 ```{r echo=TRUE}
@@ -330,7 +331,7 @@ HUcalc
 
 #### *3.3. Decision Support Engine*  
 
-This section documents the decision support functions in ecorest used to compare restoration alternatives when benefits are non-monetary and costs are monetary (or otherwise expressed in different units). The functions implement standard cost-effectiveness and incremental cost analysis concepts by (1) converting time-varying outcomes to time-averaged metrics when needed, (2) identifying cost-effective alternatives that form the efficient frontier, (3) evaluating incremental trade-offs along that frontier to identify “best buys,” and (4) producing standardized tabular and graphical summaries for interpretation and reporting.
+This section documents the decision support functions in `ecorest` used to compare restoration alternatives when benefits are non-monetary and costs are monetary (or otherwise expressed in different units). The functions implement standard cost-effectiveness and incremental cost analysis concepts by (1) converting time-varying outcomes to time-averaged metrics when needed, (2) identifying cost-effective alternatives that form the efficient frontier, (3) evaluating incremental trade-offs along that frontier to identify “best buys,” and (4) producing standardized tabular and graphical summaries for interpretation and reporting.
 
 
 *`annualizer(timevec, benefits)`*
@@ -340,9 +341,9 @@ Computes time-averaged quantities based on linear interpolation.
 Inputs are:
 
 * `timevec`: numeric vector of time intervals.  
-* `benefits`: numeric vector of values to be interpolated.  
+* `benefits`: numeric vector of ecological output values for a single condition (e.g., future with project) to be interpolated.  
 
-Function returns a time-averaged value over the specified time horizon.
+The `annualizer` function returns a time-averaged value over the specified time horizon.
 
 ```{r echo=TRUE}
 annualizer
@@ -358,7 +359,7 @@ Inputs are:
 * `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
 * `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary such as lost political capital or social costs of each alternative.  
 
-Function returns a numeric vector identifying each plan as cost-effective (1) or non-cost-effective (0). The cost-effective actions comprise the Pareto frontier of non-dominated alternatives at a given level of cost or benefit.
+The `CEfinder` function returns a numeric vector identifying each plan as cost-effective (1) or non-cost-effective (0). The cost-effective actions comprise the Pareto frontier of non-dominated alternatives at a given level of cost or benefit.
 
 
 ```{r echo=TRUE}
@@ -372,11 +373,11 @@ Examines the slope of the cost-effectiveness frontier to isolate how unit cost (
 
 Inputs are:
 
-* `benefit`: a vector of restoration benefits. Typically, these are time-averagedecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
-* `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary such as lost political capital or social costs of each alternative.  
+* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
+* `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary values such as lost political capital or social costs of each alternative.  
 * `CE`: numeric vector of 0's and 1's indicating whether a plan is cost-effective (1) or non-cost-effective (0). Can be derived from `CEfinder`.  
 
-Function returns a list with summaries of all restoration actions as well as best buy plans only.
+The `BBfinder` function returns a list with summaries of all restoration actions as well as best buy plans only.
 
 
 ```{r echo=TRUE}
@@ -390,14 +391,14 @@ Plots summary outputs of Cost-effective Incremental Cost Analysis (CEICA) in *.j
 
 Inputs are:
 
-* `altnames`: a vector of numerics or characters as unique restoration action identifiers.  
-* `benefit`: a vector of restoration benefits. Typically, these are time-averagedecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
-* `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary such as lost political capital or social costs of each alternative.  
+* `altnames`: a numeric or character vector of unique restoration action identifiers.  
+* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
+* `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary values such as lost political capital or social costs of each alternative.  
 * `CE`: numeric vector of 0's and 1's indicating whether a plan is cost-effective (1) or non-cost-effective (0). Can be derived from `CEfinder`.  
 * `BB`: numeric vector of 0's and 1's indicating whether a plan is a best buy (1) or not (0). Can be derived by isolating select outputs from `BBfinder`.  
 * `figure.name`: output figure file name structured as "filename.jpeg".  
 
-Function returns a multi-panel *.jpeg figure summarizing cost-effectiveness and incremental cost analysesvalue of habitat quality from 0 to 1 ignoring NA values.
+The `CEICAplotter` function returns a multi-panel *.jpeg figure summarizing cost-effectiveness and incremental cost analyses.
 
 
 ```{r echo=TRUE}
