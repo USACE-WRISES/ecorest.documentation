@@ -168,7 +168,6 @@ knitr::kable(Table2, caption="**Table 2. Example of USFWS Habitat Suitability Mo
 
 This data frame contains metadata for 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models, such as model names, documentation, and websites for documentation among other fields. Table 3 provides a full listing of all fields contained within `HSImetadata` along with an example for the barred owl model (Allen 1987).
 
-**Insert a table for metadata example**
 ```{r}
 # Variable descriptions from R-package
 Table3 <- data.frame(c("Model name", "Model specifications", "Scientific nomenclature of modeled taxa", "Geographic range of organism", "Type of habitat", "Citation of original model", "Conditions under which model may be applied", "Link to original individual model source", rep("Suitability index values for each organism-specific condition", 32), "Food component equation", "Food/reproduction component equation", "Roosting-nesting component equation", "Cover component equation", "Cover-roosting component equation","Cover-reproduction-food component equation", "Cover-food component equation","Cover-food shrub component equation", "Cover-food herbaceous component equation", "Winter food component equation", "Summer food component equation","Fall food component equation", "Water component equation", "Cover-breeding component equation", "Brood component equation", "Nest component equation", "Nest-brood-cover component equation", "Cover nesting component equation", "Pair habitat component equation", "Water quality component equation", "Reproduction component equation", "Cover reproduction component equation", "Disturbance component equation", "Other component equation", "Larval component equation", "Embryo and larval component equation", "Embryo component equation", "Juvenile component equation", "Fry component equation", "Spawning component equation", "Adult component equation", "Island component equation", "Interspersion component equation", "Non-island component equation", "Winter cover food component equation", "Summer food brood component equation"," Fall spring winter food component equation", "Spring food component equation", "Winter cover component equation", "Fall to spring cover component equation", "Substrate-suspended solids component equation", "Topography component equation", "Temperature component equation", "Juvenile adult component equation", "Composite HSI model equation in R syntax"))
@@ -235,7 +234,7 @@ Inputs are:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
-The `HSIarimean` function returns a value of habitat quality between zero and one (ignoring NA values).
+The `HSIarimean` function returns a value of habitat quality between zero and one (ignoring NA values). **Note that new models developed using the `HSIarimean` function must undergo certification by ECO-PCX prior to USACE use.**
 
 ```{r echo=TRUE}
 HSIarimean
@@ -251,7 +250,7 @@ Inputs are:
 * `x`: a vector of suitability indices ranging from zero to one.  
 * `w`: a vector of weights ranging from zero to one (must sum to one).  
 
-The `HSIwarimean` function returns a value of habitat quality between zero and one (ignoring NA values).
+The `HSIwarimean` function returns a value of habitat quality between zero and one (ignoring NA values). **Note that new models developed using the `HSIwarimean` function must undergo certification by ECO-PCX prior to USACE use.**
 
 
 ```{r echo=TRUE}
@@ -267,7 +266,7 @@ Inputs are:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
-The `HSIgeomean` function returns a value of habitat quality between zero and one (ignoring NA values).
+The `HSIgeomean` function returns a value of habitat quality between zero and one (ignoring NA values). **Note that new models developed using the `HSIgeomean` function must undergo certification by ECO-PCX prior to USACE use.**
 
 
 ```{r echo=TRUE}
@@ -283,7 +282,7 @@ Inputs are:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
-The `HSImin` function returns a value of habitat quality between zero and one (ignoring NA values).
+The `HSImin` function returns a value of habitat quality between zero and one (ignoring NA values). **Note that new models developed using the `HSImin` function must undergo certification by ECO-PCX prior to USACE use.**
 
 
 ```{r echo=TRUE}
