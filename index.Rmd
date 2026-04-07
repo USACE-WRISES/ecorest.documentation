@@ -104,7 +104,7 @@ The USACE ecosystem restoration mission was first authorized in the Water Resour
 
 Cost-effectiveness and incremental cost analyses (CEICA) are analytical tools for assessing the relative benefits and costs of ecosystem restoration actions and informing decisions. Benefits and costs are assessed prior to these analyses using ecological models (e.g., index models) and cost engineering methods, respectively. CEICA may then be conducted at the site scale to compare alternatives at a single location (e.g., no action vs. dam removal vs. fish ladder) or at the system scale to compare relative merits of multiple sites (e.g., no sites vs. Site-A only vs. Site-B only vs. Site-A and Site-B). Within the USACE, the Institute of Water Resources has provided a toolkit for conducting CEICA, the IWR Planning Suite (http://www.iwr.usace.army.mil/Missions/Economics/IWR-Planning-Suite/).
 
-Cost-effectiveness analysis provides a mechanism for examining the efficiency of alternative actions. For any given level of investment, the agency wants to identify the plan with the most return-on-investment (i.e., the most environmental benefits), and for any given level of environmental benefits, the agency wants a plan with the least cost. An “efficiency frontier” identifies all plans that efficiently provide benefits on a per cost basis (i.e., cost-effective plans). These "non-dominated" alternatives compose the Pareto-optimal frontier.
+Cost-effectiveness analysis provides a mechanism for examining the efficiency of alternative actions. For any given level of investment, the agency wants to identify the plan with the highest return-on-investment (i.e., the most environmental benefits), and for any given level of environmental benefits, the agency wants a plan with the lowest cost. An “efficiency frontier” identifies all plans that efficiently provide benefits on a per cost basis (i.e., cost-effective plans). These "non-dominated" alternatives compose the Pareto-optimal frontier.
 
 Incremental cost analysis is conducted on the set of cost-effective plans. This technique sequentially compares each plan to all higher cost plans to reveal changes in unit cost as output levels increase and eliminates plans that do not efficiently provide benefits on a per unit cost basis. Specifically, this analysis examines the slope of the cost-effectiveness frontier to isolate how the incremental unit cost ($/unit) increases as the magnitude of environmental benefit increases. Incremental cost analysis is ultimately intended to inform decision-makers about the consequences of increasing unit cost when increasing benefits (i.e., each unit becomes more expensive). Plans emerging from incremental cost analysis efficiently accomplish the objective relative to unit costs and are typically referred to as “best buys.” Importantly, all “best buys” are cost-effective, but all cost-effective plans are not best buys.
 
@@ -112,7 +112,7 @@ Incremental cost analysis is conducted on the set of cost-effective plans. This 
 #### *2.3. `ecorest` Model Workflow*  
 
 
-Conceptual models provide a useful mechanism for many aspects of ecosystem restoration projects such as increasing understanding about a subject, identifying restoration alternatives, and facilitating dialog among team members (Fischenich 2008, USACE 2011). However,conceptual models also inform the development of quantitative ecological models and can document the general workflow of models (Grant and Swannack 2008, Swannack et al. 2012). Here, a conceptual model is presented to describe the general workflow of the `ecorest` computational platform. A stepwise conceptual model development process (Fischenich 2008) was used to develop the model workflow (Table 1), and Figure 1 summarizes the general flow of logic guiding the development of `ecorest`.
+Conceptual models provide a useful mechanism for many aspects of ecosystem restoration projects such as increasing understanding about a subject, identifying restoration alternatives, and facilitating dialog among team members (Fischenich 2008, USACE 2011). However, conceptual models also inform the development of quantitative ecological models and can document the general workflow of models (Grant and Swannack 2008, Swannack et al. 2012). Here, a conceptual model is presented to describe the general workflow of the `ecorest` computational platform. A stepwise conceptual model development process (Fischenich 2008) was used to develop the model workflow (Table 1), and Figure 1 summarizes the general flow of logic guiding the development of `ecorest`.
 
 
 ```{r}
@@ -121,10 +121,10 @@ Table1 <- as.data.frame(matrix(NA, nrow = 5, ncol = 2))
 colnames(Table1) <- c("Step", "ecorest")
 
 #Specify rows of the table
-Table1[1,] <- c("1. State the model objectives.", "To develop a technically sound and computationally accurate suite of tools for assessing ecosystem restoration project planning with index models and informing restoration decisions, which are easily accessible for use by USACE planners, biologists, and engineers.")
+Table1[1,] <- c("1. State the model objectives.", "Develop a technically sound and computationally accurate suite of tools for assessing ecosystem restoration project planning with index models and informing restoration decisions, which are easily accessible for use by USACE planners, biologists, and engineers.")
 Table1[2,] <- c("2. Bound the system of interest.", "Index models of ecological systems structured around the quantity and quality of habitat, where quality is defined by a set of independent variables and suitability index curves.")
-Table1[3,] <- c("3. Identify critical model components within the system.", "The model platform needs to include six basic elements: (1) a generic format for defining suitability index curves, (2) a library of existing index models developed by the US Fish and Wildlife Service, (3) a computational engine for computing index model outcomes, (4) a computational engine for conducting decision support modeling, and (5) a simple, adaptable, and modular input-output structure")
-Table1[4,] <- c("4. Articulate relationships among model components.", "Components interact through a modular workflow in which model inputs are used to build suitability relationships, index-model functions compute habitat outputs, and decision-support functions consume those outputs to evaluate trade-offs.")
+Table1[3,] <- c("3. Identify critical model components within the system.", "The model platform needs to include six basic elements: (1) a generic format for defining suitability index curves, (2) a library of existing index models developed by the U.S. Fish and Wildlife Service, (3) a computational engine for computing index model outcomes, (4) a computational engine for conducting decision support modeling, and (5) a simple, adaptable, and modular input-output structure")
+Table1[4,] <- c("4. Articulate relationships among model components.", "Components interact through a modular workflow in which model inputs are used to build suitability relationships, index-model functions compute habitat outputs, and decision-support functions utilize those outputs to evaluate trade-offs.")
 Table1[5,] <- c("5. Represent the conceptual model.", "Figure 1 provides an overview of computational workflow for the `ecorest` modeling platform")
 
 ##########
@@ -140,11 +140,11 @@ knitr::kable(Table1, caption="**Table 1. Stepwise development of the ecorest con
 
 ## **3. Quantification**
 
-In the quantification step, the conceptual ecological model is converted into explicit equations, parameter definitions, and a numerical procedure for computation (Grant and Swannack 2008).This section describes the theoretical basis for ecorest, the approach used to compile the toolkit and the associated functions. 
+In the quantification step, the conceptual ecological model is converted into explicit equations, parameter definitions, and a numerical procedure for computation (Grant and Swannack 2008). This section describes the theoretical basis for `ecorest`, the approach used to compile the toolkit and the associated functions. 
 
-Ecorest contains three categories of datasets and analytical functions designed to support ecosystem restoration decision-making, with an emphasis on U.S. Army Corps of Engineers applications. First, a common data structure was developed for index models, data were compiled for existing habitat suitability index (HSI) models, and a Toolkit for interActive Modeling (TAM) was developed to facilitate development of new index models (Carrillo et al. 2019). Second, an engine was developed for computing index models with functions for both generic model evaluation outputs (e.g., suitability curve visualization and sensitivity analysis) and application-specific outputs (e.g., forecasts of with and without project conditions). Third, a series of functions were developed to conduct cost-effectiveness and incremental cost analyses (CEICA), which can be applied to index model outputs or any other trade-off between benefits and costs. These three topics are synthesized into a R-package (McKay, Hernandez-Abrams, and Cushway 2025) and will be the focus of this report.
+`ecorest` contains three categories of datasets and analytical functions designed to support ecosystem restoration decision-making, with an emphasis on U.S. Army Corps of Engineers applications. First, a common data structure was developed for index models, data were compiled for existing habitat suitability index (HSI) models, and a Toolkit for interActive Modeling (TAM) was developed to facilitate development of new index models (Carrillo et al. 2019). Second, an engine was developed for computing index models with functions for both generic model evaluation outputs (e.g., suitability curve visualization and sensitivity analysis) and application-specific outputs (e.g., forecasts of with and without project conditions). Third, a series of functions were developed to conduct cost-effectiveness and incremental cost analyses (CEICA), which can be applied to index model outputs or any other trade-off between benefits and costs. These three topics are synthesized into a R-package (McKay, Hernandez-Abrams, and Cushway 2026) and will be the focus of this report.
 
-R is a free, open-source language and software environment for statistical computing and graphics maintained by the R Core Team and supported by the R Foundation. R supports reproducible, script-based workflows and is extended through “packages,” which bundle functions, documentation, and (when applicable) datasets into a standardized structure that can be installed and executed consistently across operating systems.
+R is a free, open-source language and software environment for statistical computing and graphics maintained by the R Core Team and supported by the R Foundation (R Core Team, 2024). R supports reproducible, script-based workflows and is extended through “packages,” which bundle functions, documentation, and (when applicable) datasets into a standardized structure that can be installed and executed consistently across operating systems.
 
 The [ecorest package page](https://CRAN.R-project.org/package=ecorest) is distributed through the Comprehensive R Archive Network (CRAN), the primary public repository for R packages. CRAN maintains repository policies and uses automated checks (including installation and “R CMD check” style testing) to evaluate package structure, documentation, dependencies, and runnable examples across platforms. Packages are routinely re-checked over time as R and dependencies change, and maintainers may be required to address issues to remain compliant while noncompliant packages may be archived. See the [ecorest package page](https://CRAN.R-project.org/package=ecorest) for details.
 
@@ -156,17 +156,17 @@ The ecorest package includes a compiled library of USFWS HSI models implemented 
 
 *`HSImodels$modelname`*
 
-This list of data frames contains 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models. Each data frame contains independent variables and associated habitat suitability indices (a 0 to 1 value). Data represent break points in curves with linear extrapolation between. Categorical input variables are coded as letters. A comprehensive list of all models is included in Appendix B. Variable names often required abbreviation, and all nomenclature is also summarized in Appendix B. Table 2 provides and example of one such HSI model for barred owl model (Allen 1987). All models can be called with the corresponding model name using `HSImodels$modelname` (e.g., `HSImodels$barredowl`).
+This list of data frames contains 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models approved for USACE use by the Ecosystem Planning Center of Expertise (ECO-PCX). Each data frame contains independent variables and associated habitat suitability indices (ranging from zero to one). Data represent known breakpoints in curves, and linear extrapolation is used to define values between breakpoints. Categorical input variables are coded as letters. A comprehensive list of all models is included in Appendix B. Variable names often required abbreviation, and all nomenclature is also summarized in Appendix B. Table 2 provides and example of one such HSI model designed for the Barred Owl (*Strix varia*) (Allen 1987). All models can be called with the corresponding model name using `HSImodels$modelname` (e.g., `HSImodels$barredowl`).
 
 ```{r}
 Table2 <- HSImodels$barredowl
-knitr::kable(Table2, caption="**Table 2. Example of USFWS Habitat Suitability Model Data: Barred Owl (Allen 1987).**")
+knitr::kable(Table2, caption="**Table 2. Example of USFWS Habitat Suitability Model Data for the Barred Owl (*Strix varia*) (Allen 1987).**")
 
 ```
 
 *`HSImetadata`*
 
-This data frame contains metadata for 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models, such as model names, documentation, and websites for documentation among other fields. Table 3 provides a full listing of all fields contained within `HSImetadata` along with an example for the barred owl model (Allen 1987).
+This data frame contains metadata for 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models, such as model names, references, input parameters, and model equations. Table 3 provides a full list of all fields contained within `HSImetadata` along with an example for the Barred Owl model (Allen 1987).
 
 ```{r}
 # Variable descriptions from R-package
@@ -187,34 +187,34 @@ knitr::kable(Table3, caption="**Table 3. Example of model information embedded w
 
 #### *3.2. Index Model Computational Engine*  
 
-The index model computational engine in ecorest is implemented as a modular workflow that separates (1) representation and visualization of suitability relationships, (2) calculation of suitability indices from project inputs from USFWS models(**Section 3.1**) or user-specified models, (3) calculation of suitability indices into an overall HSI score using documented combination rules, and (4) conversion of HSI to habitat units using habitat quantity and HSI scores. This modular structure promotes computational transparency, supports verification against known outcomes, and allows functions to be used independently when only part of the workflow is needed.
+The index model computational engine in `ecorest` is implemented as a modular workflow that separates (1) representation and visualization of suitability relationships, (2) calculation of suitability indices from project inputs from USFWS models (**Section 3.1**) or user-specified models, (3) calculation of suitability indices into an overall HSI score using documented combination rules, and (4) conversion of HSI to habitat units using habitat quantity and HSI scores. This modular structure promotes computational transparency, supports verification against known outcomes, and allows functions to be used independently when only part of the workflow is needed.
 
 
 *`HSIplotter(SI, figure.name)`*
 
-Plots suitability index curves relative to multiple variables. 
+The `HSIplotter` function plots suitability index curves relative to HSI model input parameters. 
 
-Inputs are:  
+Inputs include:  
 
 * `SI`: a matrix or data frame of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.  
 * `figure.name`: output figure file name structured as "filename.jpeg".
 
-The `HSIplotter` function returns a multi-panel *.jpeg figure showing all suitability curves (e.g., Figure 2).
+The `HSIplotter` function returns a multi-panel *.jpeg figure showing all suitability curves included in a model (e.g., Figure 2).
 
 ```{r echo=TRUE}
 HSIplotter
 HSIplotter(HSImodels$barredowl, "Fig02.BarredOwl.jpeg")
 ```
 
-![**Figure 2. Example output from `HSIplotter()` for the barred owl model (Allen 1987).**](Fig02.BarredOwl.jpeg)
+![**Figure 2. Example output from `HSIplotter()` for the Barred Owl HSI model (Allen 1987).**](Fig02.BarredOwl.jpeg)
 
 <br>
 
 *`SIcalc(SI, input.proj)`*
 
-Computes suitability indices given a set of suitability curves and project-specific inputs. Suitability indices may be computed based on either linear interpolation (for continuous variables) or a lookup method (for categorical variables). 
+The `SIcalc` function computes suitability indices given a set of suitability curves and project-specific inputs. Suitability indices may be computed based on either linear interpolation (for continuous variables) or a look-up method (for categorical variables). 
 
-Inputs are:  
+Inputs include:  
 
 * `SI`: a matrix or data frame of suitability curves ordered as parameter breakpoints and associated suitability indices for each parameter with appropriate column names.   
 * `input.proj`: a numeric or categorical vector of application-specific input parameters associated with the suitability curve data from SI. Excluded variables should be entered as 'NA.'
@@ -228,9 +228,9 @@ SIcalc
 
 *`HSIarimean(x)`*
 
-Uses an arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
+The `HSIarimean` function uses an arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
 
-Inputs are:
+Inputs include:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
@@ -243,9 +243,9 @@ HSIarimean
 
 *`HSIwarimean(x, w)`*
 
-Uses a weighted arithmetic mean to combine suitability indices into an overarching habitat suitability index.
+The `HSIwarimean` function uses a weighted arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
 
-Inputs are:
+Inputs include:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 * `w`: a vector of weights ranging from zero to one (must sum to one).  
@@ -260,9 +260,9 @@ HSIwarimean
 
 *`HSIgeomean(x)`*
 
-Uses geometric mean to combine suitability indices into an overarching habitat suitability index.
+The `HSIgeomean` function uses a geometric mean equation to combine suitability indices into an overarching habitat suitability index.
 
-Inputs are:
+Inputs include:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
@@ -276,9 +276,9 @@ HSIgeomean
 
 *`HSImin(x)`*
 
-Uses the minimum of given suitability indices to calculate an overarching habitat suitability index.
+The `HSImin` function calculates the minimum of a given set of suitability indices to determine an overarching habitat suitability index.
 
-Inputs are:
+Inputs include:
 
 * `x`: a vector of suitability indices ranging from zero to one.  
 
@@ -292,16 +292,16 @@ HSImin
 
 *`HSIeqtn(HSImodelname, SIV, HSImetadata, exclude)`*
 
-Computes a habitat suitability index based on equations specified in USFWS habitat suitability models contained within `ecorest` via `HSImodels` and `HSImetadata`. Habitat suitability indices represent an overall assessment of habitat quality from combining individual suitability indices for multiple independent variables. The function computes an overall habitat suitability index. This function only applies to built-in index models described in Section 3.1.
+The `HSIeqtn` function computes a habitat suitability index based on equations specified in USFWS habitat suitability models contained within `ecorest` via `HSImodels` and `HSImetadata`. Habitat suitability indices represent an overall assessment of habitat quality from combining individual suitability indices for multiple independent variables. The function computes an overall habitat suitability index. This function only applies to built-in index models described in Section 3.1.
 
-Inputs are:
+Inputs include:
 
 * `HSImodelname`: a character string in quotations that must match an existing model name in `HSImetadata`.  
 * `SIV`: a vector of suitability index values ranging from zero to one used in the model specified in `HSImodelname`.  
 * `HSImetadata`: a data frame of HSI model metadata within the `ecorest` package. 
-* `exclude`: a vector of character strings specifying components to be excluded from calculations. See `HSImetadata` for a list of available model components. Non-NULL 'exclude' inputs are only applicable to models that explicitly provide instructions for use in the note column of HSImetadata.
+* `exclude`: a vector of character strings specifying components to be excluded from calculations. See `HSImetadata` for a list of available model components. Non-NULL 'exclude' inputs are only applicable to models that explicitly provide instructions for use in the note column of `HSImetadata`.
 
-The `HSIeqtn` function returns a numeric estimate of habitat quality between zero and one.
+The `HSIeqtn` function returns a numeric estimate of habitat quality between zero and one. **Predefined USFWS models contained in `ecorest` are certified for USACE use by ECO-PCX.**
 
 
 ```{r echo=TRUE}
@@ -311,13 +311,13 @@ HSIeqtn
 
 *`HUcalc(SI.out, habitat.quantity, HSIfunc, ...)`*
 
-Computes habitat units given a set of suitability indices ranging from zero to one, a habitat suitability index equation, and habitat quantity.
+The `HUcalc` function computes habitat units given a set of suitability indices ranging from zero to one, a habitat suitability index equation, and habitat quantity.
 
-Inputs are:
+Inputs include:
 
 * `SI.out`: a vector of application-specific suitability indices between zero and one, which can be produced from `SIcalc` or other functions.  
 * `habitat.quantity`: a numeric value of habitat size associated with these suitability indices (i.e., length, area, or volume).  
-* `HSIfunc`: a function used to combine suitability indices into a composite habitat suitability index (HSI score) (e.g., ecorest functions like HSIarimean or HSIgeomean or functions outside ecorest like max or mean).  
+* `HSIfunc`: a function used to combine suitability indices into a composite habitat suitability index (HSI score) (e.g., `ecorest` functions like `HSIarimean` or `HSIgeomean` or functions outside `ecorest` like `max` or `mean`).  
 * `...`: optional arguments to `HSIfunc`.  
 
 The `HUcalc` function returns a vector of habitat quality, habitat quantity, and index units (quantity times quality).
@@ -335,12 +335,12 @@ This section documents the decision support functions in `ecorest` used to compa
 
 *`annualizer(timevec, benefits)`*
 
-Computes time-averaged quantities based on linear interpolation.
+The `annualizer` function computes time-averaged quantities based on linear interpolation.
 
-Inputs are:
+Inputs include:
 
-* `timevec`: numeric vector of time intervals.  
-* `benefits`: numeric vector of ecological output values for a single condition (e.g., future with project) to be interpolated.  
+* `timevec`: a numeric vector of time intervals.  
+* `benefits`: a numeric vector of ecological output values for a single condition (e.g., future with project) to be interpolated.  
 
 The `annualizer` function returns a time-averaged value over the specified time horizon.
 
@@ -351,11 +351,11 @@ annualizer
 
 *`CEfinder(benefit, cost)`*
 
-Returns cost-effectiveness analysis for a particular set of alternatives.
+The `CEfinder` function returns cost-effectiveness analysis for a particular set of alternatives.
 
-Inputs are:
+Inputs include:
 
-* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
+* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often, project benefits are best presented as the "lift" associated with a restoration action (i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
 * `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary such as lost political capital or social costs of each alternative.  
 
 The `CEfinder` function returns a numeric vector identifying each plan as cost-effective (1) or non-cost-effective (0). The cost-effective actions comprise the Pareto frontier of non-dominated alternatives at a given level of cost or benefit.
@@ -368,13 +368,13 @@ CEfinder
 
 *`BBfinder(benefit, cost, CE)`*
 
-Examines the slope of the cost-effectiveness frontier to isolate how unit cost (cost/benefit) increases with increasing environmental benefit. Restoration actions with the lowest slope of unit cost are considered "best buys".
+The `BBfinder` function examines the slope of the cost-effectiveness frontier to isolate how unit cost (cost/benefit) increases with increasing environmental benefit. Restoration actions with the lowest slope of unit cost are considered "best buys."
 
-Inputs are:
+Inputs include:
 
-* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
+* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often, project benefits are best presented as the "lift" associated with a restoration action (i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
 * `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary values such as lost political capital or social costs of each alternative.  
-* `CE`: numeric vector of 0's and 1's indicating whether a plan is cost-effective (1) or non-cost-effective (0). Can be derived from `CEfinder`.  
+* `CE`: a numeric vector of zeroes and ones indicating whether a plan is cost-effective (1) or non-cost-effective (0). `CE` can be derived from `CEfinder`.  
 
 The `BBfinder` function returns a list with summaries of all restoration actions as well as best buy plans only.
 
@@ -386,16 +386,16 @@ BBfinder
 
 *`CEICAplotter(altnames, benefit, cost, CE, BB, figure.name)`*
 
-Plots summary outputs of Cost-effective Incremental Cost Analysis (CEICA) in *.jpeg format.
+The `CEICAplotter` function plots summary outputs of Cost-effective Incremental Cost Analysis (CEICA) in *.jpeg format.
 
-Inputs are:
+Inputs include:
 
 * `altnames`: a numeric or character vector of unique restoration action identifiers.  
-* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often project benefits are best presented as the "lift" associated with a restoration action(i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
+* `benefit`: a vector of restoration benefits. Typically, these are time-averaged ecological outcomes (e.g., average annual habitat units). Often, project benefits are best presented as the "lift" associated with a restoration action (i.e., the benefits of an alternative minus the benefits of a "no action" plan).  
 * `cost`: a vector of restoration costs. Typically, these are monetary costs associated with a given restoration action such as project first cost or annualized economic cost. Notably, these functions are agnostic to units, so costs could also be non-monetary values such as lost political capital or social costs of each alternative.  
-* `CE`: numeric vector of 0's and 1's indicating whether a plan is cost-effective (1) or non-cost-effective (0). Can be derived from `CEfinder`.  
-* `BB`: numeric vector of 0's and 1's indicating whether a plan is a best buy (1) or not (0). Can be derived by isolating select outputs from `BBfinder`.  
-* `figure.name`: output figure file name structured as "filename.jpeg".  
+* `CE`: a numeric vector of zeroes and ones indicating whether a plan is cost-effective (1) or non-cost-effective (0). `CE` can be derived from `CEfinder`.  
+* `BB`: a numeric vector of zeroes and ones indicating whether a plan is a best buy (1) or not (0). `BB` can be derived by isolating select outputs from `BBfinder`.  
+* `figure.name`: an output figure file name structured as "filename.jpeg".  
 
 The `CEICAplotter` function returns a multi-panel *.jpeg figure summarizing cost-effectiveness and incremental cost analyses.
 
@@ -537,7 +537,7 @@ Hijmans R.J. and Ghosh A. 2019. Spatial data analysis with R. https://rspatial.o
 
 McKay S.K.  2009.  Reducing spreadsheet errors.  ERDC TN-EMRRP-EBA-03.  U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
 
-McKay, S. Kyle, Darixa D. Hernandez-Abrams, and Kiara C. Cushway. 2025. ecorest: Conducts Analyses Informing Ecosystem Restoration Decisions. R package, version 2.0.1. Comprehensive R Archive Network (CRAN). https://CRAN.R-project.org/package=ecorest
+McKay, S. Kyle, Darixa D. Hernandez-Abrams, and Kiara C. Cushway. 2026. ecorest: Conducts Analyses Informing Ecosystem Restoration Decisions. R package, version 2.0.2. Comprehensive R Archive Network (CRAN). https://CRAN.R-project.org/package=ecorest
 
 McKay S.K., Pruitt B.A., Zettle B., Hallberg N., Hughes C., Annaert A., Ladart M., and McDonald J. 2018a. Proctor Creek Ecological Model (PCEM): Phase 1-Site screening.  ERDC/EL TR-18-11. U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
 
@@ -551,7 +551,7 @@ McMahin, TE, JW Terrell, and PC Nelson. 1984. Habitat suitability information: W
 
 Palesh G. and Anderson D. 1990. Modification of the habitat suitability index model for the bluegill (Lepomis macrochirus) for winter conditions for the Upper Mississippi River backwater habitats. 
 
-R Core Team. 2019. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+R Core Team. 2024. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
 Robinson R. Hansen W., and Orth K. 1995. Evaluation of environmental investments procedures manual interim: Cost effectiveness and incremental cost analyses. IWR Report 95-R-1. Institute for Water Resources, U.S. Army Corps of Engineers, Alexandria, Virginia.  
 
