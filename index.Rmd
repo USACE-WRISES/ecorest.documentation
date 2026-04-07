@@ -178,8 +178,12 @@ Table3$names <- colnames(HSImetadata)
 # #Isolate barred owl model on row 32 (which(HSImetadata$model=="barredowl"))
 Table3$barred <- paste(t(HSImetadata[32,]))
 
+# Fix formatting of scientific name and CR
+Table3$barred[3] = paste0("*Strix varia*")
+Table3$barred[61] = paste0("((SIV1\\*SIV2)^(1/2))\\*SIV3")
+
 # #end pretty table output
-colnames(Table3) <- c("Description", "HSImetadata() Field", "Barred Owl Model Value")
+colnames(Table3) <- c("Description", "HSImetadata Field", "Barred Owl Model Value")
 rownames(Table3) <- NULL
 knitr::kable(Table3, caption="**Table 3. Example of model information embedded within HSImetadata(): Barred Owl (Allen 1987).**")
 
@@ -522,11 +526,12 @@ knitr::asis_output(boxedHTML)
 
 ## **5. Application and Communication**
 
+Use examples from Ed's ebook?
 
 Provide a brief walk-through of application of each function. Appendix provides integrated examples of functions used together for ecosystem restoration decisions. Other appendix provides user's guide.
 
 
-Considerations for Application: What are some of the key limitations (geographic, numerical, system type)?  Look back at conceptual model limits, numerical limits, etc.  This should be a synthesis for future teams.  What’s not in the model that the user needs to know about?
+Considerations for Application: What are some of the key limitations (geographic, numerical, system type)?  Look back at conceptual model limits, numerical limits, etc.  This should be a synthesis for future teams.  What’s not in the model that the user needs to know about? sensitivity and uncertainty analysis should be conducted on models prior to application.
 
 
 Future improvement:  
@@ -552,9 +557,9 @@ Insert brief review with some highlights. Major approach? Key findings? Model li
 ## **Acknowledgements**
 
 
-Funding: EMRRP
+Funding: EMRRP and ANSRP's focus on Next Generation Ecological Modeling
 
-Ideas and collaboration: Nate Richards, Tyler Keys, Christina Saltus, Brook Herman, Carra Carrillo
+Ideas and collaboration: Nate Richards, Tyler Keys, Christina Saltus, Brook Herman, Carra Carrillo, Iris Foxfoot, Colton Shaw
 
 Testers: Michael Dougherty, Mick Porter, Danny Allen, Robin Armetta, etc.
 
@@ -637,14 +642,19 @@ Wickham, H. and Bryan, J. 2023. R packages: organize, test, document, and share 
 * *USFWS*: U.S. Fish and Wildlife Service.  
 
 
-## **Appendix B: USFWS Habitat Suitability Models included in ecorest**
+## **Appendix B: USFWS Habitat Suitability Models included in `ecorest`**
 
 
 ```{r}
 #Compile and return a table of key metadata properties for each model
-ecorest.metadata.summary <- cbind(paste(HSImetadata$model), paste(HSImetadata$species), paste(HSImetadata$documentation), 
-                                  eval(paste("[pdf](", HSImetadata$website, ")", sep="")))
-colnames(ecorest.metadata.summary) <- c("Model Name", "Taxa", "Documentation", "Link")
+ecorest.metadata.summary <- cbind(
+  paste(HSImetadata$model),
+  paste0("*", HSImetadata$species, "*"),  # italicize
+  paste(HSImetadata$documentation),
+  eval(paste("[pdf](", HSImetadata$website, ")", sep=""))
+)
+
+colnames(ecorest.metadata.summary) <- c("Model Name", "Taxa", "Documentation", "Website link")
 knitr::kable(ecorest.metadata.summary, caption="Table B-1. USFWS Habitat Suitability Index models included in ecorest.", align="c")
 ```
 
