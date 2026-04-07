@@ -408,7 +408,7 @@ CEICAplotter
 ## **4. Evaluation**
 
 
-Ecological models typically rely on multiple variables or ecological processes, and in many cases present a variety of ecological outcomes. Models can quickly become complex system representations with many components, inputs, assumptions, and modules. Model evaluation is the process for ensuring that numerical tools are scientifically defensible and transparently developed. Evaluation is often referred to as verification or validation, but it in fact includes a family of methods ranging from peer review to model testing to error checking (Schmolke et al. 2010). In this more general sense, evaluation should include the following (Grant and Swannack 2008): (1) assessing the reasonableness of model structure, (2) assessing functional relationships and verifying code, (3) evaluating model behavior relative to expected patterns, (4) comparing outcomes to empirical data, if possible, and (5) analyzing uncertainty in predictions. The USACE has established an ecological model certification process to ensure that planning models are sound and functional. These generally consist of evaluating tools relative to the three following categories: system quality, technical quality, and usability (EC 1105-2-412).
+Ecological models typically rely on multiple variables or ecological processes, and in many cases present a variety of ecological outcomes. Models can quickly become complex system representations with many components, inputs, assumptions, and modules. Model evaluation is the process for ensuring that numerical tools are scientifically defensible and transparently developed. Evaluation is often referred to as verification or validation, but it in fact includes a family of methods ranging from peer-review to model testing to error checking (Schmolke et al. 2010). In this more general sense, evaluation should include the following (Grant and Swannack 2008): (1) assessing the reasonableness of model structure, (2) assessing functional relationships and verifying code, (3) evaluating model behavior relative to expected patterns, (4) comparing outcomes to empirical data, if possible, and (5) analyzing uncertainty in predictions. The USACE has established an ecological model certification process to ensure that planning models are sound and functional. These generally consist of evaluating tools relative to the three following categories: system quality, technical quality, and usability (EC 1105-2-412).
 
 
 #### *4.1. System Quality*  
@@ -421,7 +421,7 @@ To confirm proper functionality, the `ecorest` package was rigorously assessed a
 
 *Team-based coding*: Version 1.0.0 of `ecorest` was designed jointly by S.K. McKay and D.D. Hernandez-Abrams using team-based coding. Following package implementation, K.C. Cushway conducted a thorough review of model structure and accuracy by revisiting the model documentation from the USFWS for every HSI model in `ecorest` to identify potential errors and ensure code accuracy. Model updates or improvements are implemented in versions 2.0.0 - 2.0.2.
 
-*Error reporting*: To communicate issues to users and reviewers, functions in `ecorest` were designed to generate error messages in the event of incorrect inputs or user errors. Common error messages in `ecorest` include incorrect number of input errors, out of range errors, and errors regarding incorrect formatting.
+*Error reporting*: To communicate issues to users and reviewers, functions in `ecorest` were designed to generate error messages in the event of incorrect inputs or user errors. Common error messages in `ecorest` include 'incorrect number of input' errors, 'out of range' errors, and errors regarding incorrect formatting.
 
 Examples of some error messages associated with various `ecorest` functions:
 ```{r echo = TRUE, eval = FALSE}
@@ -455,29 +455,70 @@ if (any(duplicated(timevec))) {
 
 ##### *4.1.3 Model updates: peer review and version control*
 
-R packages published and maintained on the Comprehensive R Archive Network (CRAN) undergo automated reviews prior to initial package release and every package update to ensure that they are functional and compatible with multiple versions of R software, and that dependencies or reverse dependencies remain functional (Wickham and Bryan 2023). Every initial R package submission is subject to both this automated review and an additional human review to ensure that it meets the CRAN standards for quality assurance (Wickham and Bryan 2023). Version 1.0.0 of `ecorest` passed the automated and human reviews at initial submission, and both automated reviews for updates to version 2.0.0 - 2.0.2. The newest version of `ecorest`, v2.0.2, is currently available on CRAN at https://cran.r-project.org/web/packages/ecorest/index.html, and older versions are archived on CRAN at https://cran.r-project.org/src/contrib/Archive/ecorest/.
+R packages published and maintained on CRAN undergo automated reviews prior to initial package release and every package update to ensure that they are functional and compatible with multiple versions of R software, and that dependencies or reverse dependencies remain functional (Wickham and Bryan 2023). Every initial R package submission is subject to both this automated review and an additional human review to ensure that it meets the CRAN standards for quality assurance (Wickham and Bryan 2023). Version 1.0.0 of `ecorest` passed the automated and human reviews at initial submission, and automated reviews for updates to version 2.0.0 - 2.0.2. The newest version of `ecorest`, v2.0.2, is currently available on CRAN at https://cran.r-project.org/web/packages/ecorest/index.html, and older versions are archived on CRAN at https://cran.r-project.org/src/contrib/Archive/ecorest/. 
+
+**Should we include any more information here, including the CRAN reports themselves (maybe in an Appendix)?**
 
 #### *4.2. Technical Quality*  
 
-All blue-book HSI models included in `ecorest` are literature-based and grounded in expert opinion. To further assess each model's technical quality, a sensitivity and uncertainty analysis was performed (Cushway et al., in review). Results of each analysis are summarized in PDF format at https://github.com/EcoModTeam/ecorest-sensitivity-and-uncertainty, but users interested in evaluating model technical quality may consider running their own sensitivity and uncertainty analysis using the process outlined in Appendix D, as the current analysis was generalized for all models and made relatively broad assumptions about parameter and output probability distributions. 
+All blue-book HSI models included in `ecorest` are literature-based and grounded in expert opinion. To further assess each model's technical quality, a sensitivity and uncertainty analysis was performed (Cushway et al., in press). Results of each analysis are summarized in PDF format at https://github.com/EcoModTeam/ecorest-sensitivity-and-uncertainty, but users interested in evaluating model technical quality may consider running their own sensitivity and uncertainty analysis using the process outlined in Appendix D, as the current analysis was generalized for all models and made relatively broad assumptions about parameter and output probability distributions. 
 
 #### *4.3. Usability*  
 
+The functions in `ecorest` are designed to be user-friendly and are meant to simplify the application process for both HSI and CEICA analyses. R software is ACE-IT approved and both freely and publicly available, making `ecorest` widely accessible to users from a variety of backgrounds. Source-code is available for all package functions and version-controlled archives are available on CRAN for users interested in accessing older versions of the package.
 
-Usability: Model software / hardware availability or requirements (e.g., ACE-IT approval). Input data availability, formatting, and processing.  Output format and processing. Training availability.  Technical support by developer, model documents, etc. Model accessibility (e.g., open source code, web-service, version control). Proprietary / black box? 
+*Formatting*: To aid in user application and interpretation, `ecorest` was designed using consistent formatting and naming conventions (Appendix B-2). Both input and output formatting are consistent across models.
 
-Other considerations: USACE policy compliance and conformance. End-user capability. Adaptability for future applications (same system new data, different systems). Archival (code, model maintenance, new programming languages, etc.).
+*Training availability*: For users unfamiliar with R software, a central repository for ecological modeling in R is currently in development at https://usace-wrises.github.io/USACE.EcoMod.Training/index.html. This resource provides basic training for R usage and includes several chapters on applying and using functions included in the `ecorest` package.
 
+*Technical support*: Help text for every function in `ecorest` can be accessed in R software using the format `?functionname` or `help(functionname)` (e.g., `?HSIeqtn` or `help(HSIeqtn)`). Help text includes definitions for input and output values, useful references, and example applications to guide the user in proper application of functions. In addition, documentation for every function in the `ecorest` package was auto-generated by R during package submission and can be accessed at: https://cran.r-project.org/web/packages/ecorest/ecorest.pdf. Contact information for the package maintainer (S.K. McKay) is accessible at https://cran.r-project.org/web/packages/ecorest/index.html and can be used to request clarification not provided by package documentation or report bugs or errors.
 
-In general for USACE: R is globally available and free. R is ACE-IT approved. Simple formatting. 
+Example of help text for `HSIeqtn`:
+```{r}
 
+# Example of help document
+helpfile <- utils:::.getHelpFile(help(HSIeqtn))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+# CSS scaling wrapper
+# CSS for box and scaling
+css_fix <- "
+<style>
+.help-box {
+  border: 2px solid #444;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
+}
+.help-scale {
+  transform-origin: top left;
+  display: inline-block; /* shrink-wrap height to content */
+}
+</style>
+"
 
-Within R-package:  
+# Scale factor — adjust until it fits
+scale_factor <- 0.7
 
-* Help documentation  
-* Help includes examples
-* Insert.  
+# Wrap HTML in scaling container
+boxedHTML <- paste0(
+  css_fix,
+  '<div class="help-box">',
+    '<div class="help-scale" style="transform: scale(', scale_factor, ');">',
+      htmltools::htmlPreserve(rawHTML),
+    '</div>',
+  '</div>'
+)
 
+# Output in R Markdown
+knitr::asis_output(boxedHTML)
+
+```
+
+*USACE compliance*: Models included in `HSImodels` and `HSImetadata` are certified for USACE application by ECO-PCX. However, the `HSImin`, `HSIarimean`, `HSIwarimean`, and `HSIgeomean` functions are meant to assist users in easily applying and conducting analyses for models that are not included in `HSImodels` and `HSImetadata`. Unless otherwise specified by a project team, models implemented using these functions are **not** certified for use and will need additional approvals from ECO-PCX prior to application.
 
 ## **5. Application and Communication**
 
@@ -525,7 +566,9 @@ Allen, A.W. 1987. Habitat suitability index models: barred owl. U.S. Fish Wild. 
 
 Brinson M.M. 1993. A hydrogeomorphic classification for wetlands. Technical Report WRP-DE-4. Vicksburg, MS: U.S. Army Engineer Waterway Experiment Station.
 
-Carrillo C., McKay S.K., and Swannack T.S. 2020. Ecological Model Development: Toolkit for interActive Modeling (TAM). ERDC TN-EMRRP-??.  U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
+Carrillo C., McKay S.K., and Swannack T.M. 2020. Ecological Model Development: Toolkit for interActive Modeling (TAM). ERDC TN-EMRRP-??.  U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
+
+Cushway, K.C., Shaw, C., McKay, S.K., and Swannack, T.M. In press. Sensitivity and uncertainty in habitat suitability modeling: guidance and pitfalls for ecological applications. Environmental Software and Modelling, 106984.
 
 Fischenich J.C. 2008. The application of conceptual models to ecosystem restoration. ERDC TN-EBA-TN-08-1. U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
 
