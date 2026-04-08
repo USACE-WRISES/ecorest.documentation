@@ -704,15 +704,9 @@ knitr::kable(ecorest.unit.tests, caption = "Table C-2. Testing records for funct
 A tutorial on how to conduct sensitivity and uncertainty analysis for HSI models can be found here: https://usace-wrises.github.io/USACE.EcoMod.Training/sensitivity-and-uncertainty-analysis-for-habitat-suitability-index-hsi-models.html
 
 
-## **Appendix E: User's Guide**
 
 
-Step-by-step (screenshot-style) guide for use.  How is the model applied?  Differences in scenarios?  Experimental design for model runs?  Range of uncertainty analyzed in model runs?  
-
-Insert step-by-step guide to model application with R only.
-
-
-## **Appendix F: Example Applications**
+## **Appendix E: Example Applications**
 
 
 Insert overview of applications:  
