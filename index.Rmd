@@ -805,7 +805,7 @@ nPW <- nrow(input.PW)
 SI.PW <- matrix(NA, nrow = nPW, ncol = 7)
 
 for(i in 1:nPW){
-  SI.PW[i, ] <- SIcalc(PW.model, as.character(input.PW[i, ]))
+  SI.PW[i, ] <- SIcalc(PW.model, input.PW[i, ])
 }
 
 # Barred Owl
@@ -814,7 +814,7 @@ nBO <- nrow(input.BO)
 SI.BO <- matrix(NA, nrow = nBO, ncol = 3)
 
 for(i in 1:nBO){
-  SI.BO[i, ] <- SIcalc(BO.model, as.character(input.BO[i, ]))
+  SI.BO[i, ] <- SIcalc(BO.model, input.BO[i, ])
 }
 
 # Gray Squirrel
@@ -823,14 +823,7 @@ nGS <- nrow(input.GS)
 SI.GS <- matrix(NA, nrow = nGS, ncol = 5)
 
 for(i in 1:nGS){
-  row_i <- c(
-    as.character(GS$SIV1[i]),
-    GS$SIV2[i],
-    as.character(GS$SIV3[i]),
-    as.character(GS$SIV4[i]),
-    as.character(GS$SIV5[i])
-  )
-  SI.GS[i, ] <- SIcalc(GS.model, row_i)
+  SI.GS[i, ] <- SIcalc(GS.model, input.GS[i, ])
 }
 
 # Mink
@@ -840,17 +833,11 @@ input.MNK <- MNK[, 2:7]
 nMNK <- nrow(input.MNK)
 SI.MNK <- matrix(NA, nrow = nMNK, ncol = 6)
 
+
 for(i in 1:nMNK){
-  row_i <- c(
-    MNK$SIV1[i],
-    MNK$SIV2[i],
-    MNK$SIV3[i],
-    MNK$SIV4[i],
-    MNK$SIV5[i],
-    MNK$SIV6[i]
-  )
-  SI.MNK[i, ] <- SIcalc(MNK.model, row_i)
+  SI.MNK[i, ] <- SIcalc(MNK.model, input.MNK[i, ])
 }
+
 
 
 ```
