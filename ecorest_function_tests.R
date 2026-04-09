@@ -28,8 +28,8 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
     stop("Error: invalid function name. Please enter one of the following: 'HSImin', 'HSIarimean', 'HSIgeomean', 'HSIwarimean'.", call. = F)
   }
   ## Make sure the test_type is correct
-  if (!test_type %in% c('NA', 'invalid', 'expected', 'invalid_weights', 'invalid_num_weights')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'invalid', 'expected', 'invalid_weights', 'invalid_num_weights'.", call. = F)
+  if (!test_type %in% c('NA', 'invalid', 'expected', 'invalid_weights', 'invalid_num_weights', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'NA', 'invalid', 'expected', 'invalid_weights', 'invalid_num_weights', 'dataframe'.", call. = F)
   }
   ## Make sure weighting is only compatible with HSIwarimean
   if (!function_name %in% 'HSIwarimean' & test_type %in% c('invalid_weights', 'invalid_num_weights')) {
@@ -45,9 +45,7 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
     if (test_type == 'NA') {
       num_NA = sample(1:(num_inputs - 2), 1) # randomly select number of NA values to be included
       input_vals[sample(length(input_vals), num_NA)] = NA # randomly replace some values with NA
-    } 
-    ## If the test is meant to test inputs that include invalid values, replace some inputs with invalid numbers
-    else if (test_type == 'invalid') {
+    } else if (test_type == 'invalid') {
       # Inputs < 0 or > 1
         num_invalid = sample(1:(num_inputs - 2), 1) # randomly select number of invalid inputs to be included  
         invalid_type = sample(1:3, 1)
@@ -66,10 +64,12 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
         }
         
         input_vals[sample(length(input_vals), num_invalid)] = invalid 
-    } 
+    } else if (test_type == 'dataframe') {
+      input_vals = data.frame(input_vals)
+    }
     ## If the function being tested is HSImin, test limiting factor equation
     if (function_name == 'HSImin') {
-      HSI = try(HSImin(c(input_vals)), silent = T) # calculate HSI
+      HSI = suppressWarnings(try(HSImin(input_vals), silent = T)) # calculate HSI
       ## Compare HSImin result with minimum value equation
       if (isTRUE(all.equal(HSI, min(input_vals, na.rm = T)))) {
         passes = passes + 1 # if values match, test passes
@@ -77,19 +77,19 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
     } 
     ## If the function being tested is HSIarimean, compare arithmetic mean equation
     else if (function_name == 'HSIarimean') {
-      HSI = suppressWarnings(try(HSIarimean(c(input_vals)), silent = T)) # calculate HSI
+      HSI = suppressWarnings(try(HSIarimean(input_vals), silent = T)) # calculate HSI
       ## Compare HSIarimean to arithmetic mean output
-      if (all(is.numeric(input_vals))) {
-        if (isTRUE(all.equal(HSI, suppressWarnings(sum(input_vals, na.rm = T)) / (num_inputs - num_NA)))) {
+      if (all(is.numeric(as.matrix(input_vals)))) {
+        if (isTRUE(all.equal(HSI, suppressWarnings(sum(input_vals, na.rm = T) / (num_inputs - num_NA))))) {
           passes = passes + 1 # if values match, test passes
         }
       }
     } 
     ## If the function being tested is HSIgeomean, compare to geometric mean equation
     else if (function_name == 'HSIgeomean') {
-      HSI = suppressWarnings(try(HSIgeomean(c(input_vals)), silent = T)) # calculate HSI
+      HSI = suppressWarnings(try(HSIgeomean(input_vals), silent = T)) # calculate HSI
       ## Compare HSIgeomean to geometric mean equation
-      if (all(is.numeric(input_vals))) {
+      if (all(is.numeric(as.matrix(input_vals)))) {
         if (isTRUE(all.equal(HSI, (prod(input_vals, na.rm = TRUE) ^ (1 / (num_inputs - num_NA)))))) {
           passes = passes + 1 # if values match, test passes
         } 
@@ -111,21 +111,38 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
       } 
       ## If testing expected or NA values, calculate weights normally
       else {
-        weights = weights_raw / sum(weights_raw) # normalize weights to sum to one
-        weights[length(weights)] <- weights[length(weights)] + (1 - sum(weights)) # ensure that values sum to one
+        weights <- weights_raw
+        
+        weights[is.na(input_vals)] <- NA
+        
+        weights <- weights / sum(weights, na.rm = TRUE)
+        
+        weights[max(which(!is.na(weights)))] <-
+          weights[max(which(!is.na(weights)))] + (1 - sum(weights, na.rm = TRUE))
+
       }
-      HSI = suppressWarnings(try(HSIwarimean(input_vals, weights), silent = T)) # calculate HSI
-      ## Compare HSIwarimean to weighted arithmetic mean
-      if (all(is.numeric(input_vals))) {
-        if (isTRUE(all.equal(HSI, suppressWarnings(sum(input_vals * weights, na.rm = TRUE)), tolerance = 1e-12))) {
-          passes = passes + 1 # if values match, test passes
+      if (test_type == 'dataframe') {
+        df = data.frame(input_vals = input_vals, weights = weights)
+        HSI = suppressWarnings(try(HSIwarimean(df$input_vals, df$weights), silent = T)) # calculate HSI
+        ## Compare HSIwarimean to weighted arithmetic mean
+        if (all(is.numeric(as.matrix(df$input_vals)))) {
+          if (isTRUE(all.equal(HSI, suppressWarnings(sum(df$input_vals * df$weights, na.rm = TRUE)), tolerance = 1e-12))) {
+            passes = passes + 1 # if values match, test passes
+          }
+        }
+      } else {
+        HSI = suppressWarnings(try(HSIwarimean(input_vals, weights), silent = T)) # calculate HSI
+        ## Compare HSIwarimean to weighted arithmetic mean
+        if (all(is.numeric(as.matrix(input_vals)))) {
+          if (isTRUE(all.equal(HSI, suppressWarnings(sum(input_vals * weights, na.rm = TRUE)), tolerance = 1e-12))) {
+            passes = passes + 1 # if values match, test passes
+          }
         }
       }
-       
     } 
   }
   # Pass rate
-  if (test_type %in% c('expected', 'NA')) {
+  if (test_type %in% c('expected', 'NA', 'dataframe')) {
   return(passes / iterations * 100) # if results should be valid, return the pass rate
   } else {
     return((iterations - passes) / iterations *100) # if results should be errors, return the fail rate
@@ -136,20 +153,24 @@ HSI_tester = function(function_name, test_type = 'expected', iterations = 9999) 
 HSI_tester('HSImin', 'expected', 9999)
 HSI_tester('HSImin', 'NA', 9999)
 HSI_tester('HSImin', 'invalid', 9999)
+HSI_tester('HSImin', 'dataframe', 9999)
 
 HSI_tester('HSIarimean', 'expected', 9999)
 HSI_tester('HSIarimean', 'NA', 9999)
 HSI_tester('HSIarimean', 'invalid', 9999)
+HSI_tester('HSIarimean', 'dataframe', 9999)
 
 HSI_tester('HSIgeomean', 'expected', 9999)
 HSI_tester('HSIgeomean', 'NA', 9999)
 HSI_tester('HSIgeomean', 'invalid', 9999)
+HSI_tester('HSIgeomean', 'dataframe', 9999)
 
 HSI_tester('HSIwarimean', 'expected', 9999)
 HSI_tester('HSIwarimean', 'NA', 9999)
 HSI_tester('HSIwarimean', 'invalid', 9999)
 HSI_tester('HSIwarimean', 'invalid_weights', 9999)
 HSI_tester('HSIwarimean', 'invalid_num_weights', 9999)
+HSI_tester('HSIwarimean', 'dataframe', 9999)
 
 ################################################################################
 
@@ -161,8 +182,8 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
   num_extra = 0 # set number of extra values to zero
   exclude = NULL
   ## Make sure the test_type is correct
-  if (!test_type %in% c('expected', 'exclude', 'invalid_name', 'invalid_SIV', 'wrong_num_SIV')) {
-    stop("Error: invalid test type. Please enter one of the following: 'expected', 'exclude', 'invalid_name', 'invalid_SIV', 'wrong_num_SIV'.", call. = F)
+  if (!test_type %in% c('expected', 'exclude', 'invalid_name', 'invalid_SIV', 'wrong_num_SIV', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'expected', 'exclude', 'invalid_name', 'invalid_SIV', 'wrong_num_SIV', 'dataframe'.", call. = F)
   }
 
   ## For each model in HSImetadata, run the test 'iterations' number of times
@@ -207,7 +228,9 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
          num_extra = sample(1:20, 1) # randomly decide how many extra SIV values to include (between 1 and 20)
          extra_SIV = runif(num_extra, min = 0, max = 1) # sample num_extra random values between zero and one
          input_vals = append(input_vals, extra_SIV)
-       } 
+       } else if (test_type == 'dataframe') {
+         input_vals = data.frame(input_vals)
+       }
        HSI = try(HSIeqtn(model, input_vals, HSImetadata, exclude), silent = TRUE) # calculate overall HSI if possible
        if (HSI >= 0 & HSI <= 1) {
          passes = passes + 1
@@ -223,7 +246,7 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
      } 
    }
   # Pass rate
-  if (test_type %in% c('expected', 'NA')) {
+  if (test_type %in% c('expected', 'NA', 'dataframe')) {
     return(passes / (iterations * 349) * 100) # if results should be valid, return the pass rate
   } else {
     return(((iterations * 349) - passes) / (iterations * 349) * 100) # if results should be errors, return the fail rate
@@ -234,6 +257,7 @@ HSIeqtn_tester('expected', 100)
 HSIeqtn_tester('invalid_name', 100)
 HSIeqtn_tester('invalid_SIV', 100)
 HSIeqtn_tester('wrong_num_SIV', 100)
+HSIeqtn_tester('dataframe', 100)
 
 ################################################################################
 
@@ -402,8 +426,8 @@ HUcalc_tester = function(test_type, iterations) {
   passes = 0 # set initial passes to zero
   
   # Make sure test_types are correct
-  if (!test_type %in% c('expected', 'invalid', 'NA', 'invalid_area')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'invalid', 'invalid_area.", call. = F)
+  if (!test_type %in% c('expected', 'invalid', 'NA', 'invalid_area', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'invalid', 'invalid_area', 'dataframe'.", call. = F)
   }
   
   functions = c('HSIarimean', 'HSIgeomean', 'HSImin', 'HSIwarimean', 'mean', 'max', 'min') # functions to use
@@ -442,11 +466,21 @@ HUcalc_tester = function(test_type, iterations) {
         } else {
           area = Inf
         }
+    } else if (test_type == 'dataframe') {
+      inputs = data.frame(inputs)
     }
     if (functions[use] == 'HSIwarimean') {
       weights_raw = runif(num_SIV) # randomly generate weights
-      weights = weights_raw / sum(weights_raw) # normalize weights to sum to one
-      weights[length(weights)] <- weights[length(weights)] + (1 - sum(weights)) #
+      
+      weights <- weights_raw
+      
+      weights[is.na(inputs)] <- NA
+      
+      weights <- weights / sum(weights, na.rm = TRUE)
+      
+      weights[max(which(!is.na(weights)))] <-
+        weights[max(which(!is.na(weights)))] + (1 - sum(weights, na.rm = TRUE))
+      
       hu = suppressWarnings(try(HUcalc(inputs, area, eval(parse(text = functions[use])), weights), silent = T))
     } else {
       hu = suppressWarnings(try(HUcalc(inputs, area, eval(parse(text = functions[use]))), silent = T))
@@ -456,7 +490,7 @@ HUcalc_tester = function(test_type, iterations) {
     } 
   }
   # Pass rate
-  if (test_type %in% c('expected', 'NA')) {
+  if (test_type %in% c('expected', 'NA', 'dataframe')) {
     return(passes / iterations * 100) # if results should be valid, return the pass rate
   } else {
     return((iterations - passes) / iterations * 100) # if results should be errors, return the fail rate
@@ -467,6 +501,7 @@ HUcalc_tester('expected', 9999)
 HUcalc_tester('NA', 9999)
 HUcalc_tester('invalid', 9999)
 HUcalc_tester('invalid_area', 9999)
+HUcalc_tester('dataframe', 9999)
 
 ################################################################################
 
@@ -475,7 +510,7 @@ HUcalc_tester('invalid_area', 9999)
 HSIplotter_tester = function(test_type, iterations = 349) {
   # Make sure test_type is correct
   if (!test_type %in% c('blue-book', 'manual', 'invalid')) {
-    stop("Invalid test type. Please enter one of the following: 'blue-book', 'manual', 'invalid.", call. = F)
+    stop("Invalid test type. Please enter one of the following: 'blue-book', 'manual', 'invalid'.", call. = F)
   }
   
   # If testing blue book models:
@@ -610,8 +645,8 @@ HSIplotter_tester('invalid', 349)
 
 annualizer_test = function(test_type = 'expected', iterations) {
   passes = 0 # Set number of passes to zero
-  if (!test_type %in% c('NA', 'expected', 'wrong_time', 'wrong_benefit', 'wrong_order', 'duplicate_time', 'invalid_time', 'invalid_benefit')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_time', 'wrong_benefit', 'wrong_order, 'duplicate_time', 'invalid_time', 'invalid_benefit'.", call. = F)
+  if (!test_type %in% c('NA', 'expected', 'wrong_time', 'wrong_benefit', 'wrong_order', 'duplicate_time', 'invalid_time', 'invalid_benefit', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_time', 'wrong_benefit', 'wrong_order, 'duplicate_time', 'invalid_time', 'invalid_benefit', 'dataframe'.", call. = F)
   }
   
   for (i in 1:iterations) {
@@ -676,6 +711,11 @@ annualizer_test = function(test_type = 'expected', iterations) {
     }
   }
     
+  else if (test_type == 'dataframe') {
+    timevec = data.frame(timevec)
+    benefits = data.frame(benefits)
+  }
+    
   
   result = suppressWarnings(try(annualizer(timevec, benefits), silent = T)) # Calculate time-averaged value
   
@@ -684,7 +724,7 @@ annualizer_test = function(test_type = 'expected', iterations) {
     passes = passes + 1
   }
   # Pass rate
-  if (test_type %in% c('expected', 'wrong_order')) {
+  if (test_type %in% c('expected', 'wrong_order', 'dataframe')) {
     return(passes / iterations * 100) # if results should be valid, return the pass rate
   } else {
     return((iterations - passes) / iterations * 100) # if results should be errors, return the fail rate
@@ -699,6 +739,7 @@ annualizer_test(test_type = 'wrong_order', iterations = 9999)
 annualizer_test(test_type = 'duplicate_time', iterations = 9999)
 annualizer_test(test_type = 'invalid_time', iterations = 9999)
 annualizer_test(test_type = 'invalid_benefit', iterations = 9999)
+annualizer_test(test_type = 'dataframe', iterations = 9999)
 
 # Test specific inputs to ensure math calculations are correct
 timevec=c(0, 10) 
@@ -713,8 +754,8 @@ annualizer(timevec, benefits)
 CEfinder_tester = function(test_type = 'expected', iterations) {
   passes = 0 # Set number of passes to zero
   ## Make sure the correct tests are being run
-  if (!test_type %in% c('NA', 'expected', 'wrong_cost', 'wrong_benefit', 'invalid_cost', 'invalid_benefit')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_cost', 'wrong_benefit', 'invalid_cost', 'invalid_benefit'.", call. = F)
+  if (!test_type %in% c('NA', 'expected', 'wrong_cost', 'wrong_benefit', 'invalid_cost', 'invalid_benefit', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_cost', 'wrong_benefit', 'invalid_cost', 'invalid_benefit', 'dataframe'.", call. = F)
   }
   for (i in 1:iterations) {
     num_inputs = sample(2:20, 1) # randomly select a number of samples
@@ -756,6 +797,11 @@ CEfinder_tester = function(test_type = 'expected', iterations) {
       }
     }
     
+    else if (test_type == 'dataframe') {
+      benefit = data.frame(benefit)
+      cost = data.frame(cost)
+    }
+    
     CE = try(CEfinder(benefit, cost), silent = T) # calculate cost effectiveness of each plan
     
     ## If all outputs are binary, pass
@@ -764,7 +810,7 @@ CEfinder_tester = function(test_type = 'expected', iterations) {
     }
   }
   # Pass rate
-  if (test_type %in% c('expected')) {
+  if (test_type %in% c('expected', 'dataframe')) {
     return(passes / iterations * 100) # if results should be valid, return the pass rate
   } else {
     return((iterations - passes) / iterations * 100) # if results should be errors, return the fail rate
@@ -778,6 +824,7 @@ CEfinder_tester('wrong_benefit', 9999)
 CEfinder_tester('wrong_cost', 9999)
 CEfinder_tester('invalid_cost', 9999)
 CEfinder_tester('invalid_benefit', 9999)
+CEfinder_tester('dataframe', 9999)
 
 ################################################################################
 
@@ -787,8 +834,8 @@ CEfinder_tester('invalid_benefit', 9999)
 BBfinder_tester = function(test_type = 'expected', iterations) {
   passes = 0 # Set number of passes to zero
   ## Make sure the correct tests are being run
-  if (!test_type %in% c('NA', 'expected', 'wrong_cost', 'wrong_benefit', 'wrong_plans', 'invalid_benefit', 'invalid_cost', 'invalid_CE', 'duplicate_benefit')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_cost', 'wrong_benefit', 'wrong_plans', 'invalid', 'invalid_benefit', 'invalid_cost', 'invalid_CE', 'duplicate_benefit.", call. = F)
+  if (!test_type %in% c('NA', 'expected', 'wrong_cost', 'wrong_benefit', 'wrong_plans', 'invalid_benefit', 'invalid_cost', 'invalid_CE', 'duplicate_benefit', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_cost', 'wrong_benefit', 'wrong_plans', 'invalid', 'invalid_benefit', 'invalid_cost', 'invalid_CE', 'duplicate_benefit, 'dataframe'.", call. = F)
   }
     for (i in 1:iterations) {
       num_inputs = sample(2:20, 1) # randomly select a number of samples
@@ -868,6 +915,10 @@ BBfinder_tester = function(test_type = 'expected', iterations) {
             rep_position = sample(1:length(benefit), 1) # select value to replace with duplicate
           }
           benefit[rep_position] = benefit[dup_position]
+      } else if (test_type == 'dataframe') {
+        benefit = data.frame(benefit)
+        cost = data.frame(cost)
+        CE = data.frame(CE)
       }
     
       
@@ -879,7 +930,7 @@ BBfinder_tester = function(test_type = 'expected', iterations) {
       }
     }
     # Pass rate
-    if (test_type %in% c('expected', 'duplicate_benefit')) {
+    if (test_type %in% c('expected', 'duplicate_benefit', 'dataframe')) {
       return(passes / iterations * 100) # if results should be valid, return the pass rate
     } else {
       return((iterations - passes) / iterations * 100) # if results should be errors, return the fail rate
@@ -895,6 +946,7 @@ BBfinder_tester('invalid_benefit', 9999)
 BBfinder_tester('invalid_cost', 9999)
 BBfinder_tester('invalid_CE', 9999)
 BBfinder_tester('duplicate_benefit', 9999)
+BBfinder_tester('dataframe', 9999)
 
 ################################################################################
 
@@ -902,8 +954,8 @@ BBfinder_tester('duplicate_benefit', 9999)
 
 CEICAplotter_tester = function(test_type = 'expected', iterations) {
   ## Make sure the correct tests are being run
-  if (!test_type %in% c('NA', 'expected', 'wrong_cost', 'wrong_benefit')) {
-    stop("Error: invalid test type. Please enter one of the following: 'NA', 'expected', 'wrong_cost', 'wrong_benefit'.", call. = F)
+  if (!test_type %in% c('expected', 'dataframe')) {
+    stop("Error: invalid test type. Please enter one of the following: 'expected', 'dataframe.", call. = F)
   }
   
   if(!dir.exists('CEICA_tests')) {
@@ -925,8 +977,17 @@ CEICAplotter_tester = function(test_type = 'expected', iterations) {
     
     BB <- BBfinder(benefit, cost, CE)[[1]][,4]
     altnames = paste("Alt", seq(1:num_inputs), sep = "")
+    
+    if (test_type == 'dataframe') {
+      altnames = data.frame(altnames)
+      benefit = data.frame(benefit)
+      cost = data.frame(cost)
+      CE = data.frame(CE)
+      BB = data.frame(BB)
+    }
     try(CEICAplotter(altnames, benefit, cost, CE, BB, paste(getwd(), '/CEICA_tests/test', i, sep = "",".jpeg")))
   }
 }
 
 CEICAplotter_tester('expected', 300)
+CEICAplotter_tester('dataframe', 300)
