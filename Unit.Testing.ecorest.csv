@@ -1,19 +1,24 @@
 ﻿Function,Test,Example input,Tests,Expected output,Pass rate,Outcome
 HSImin,Inputs for expected values,"c(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the minimum of the inputs,100%,Pass
 ,Inputs with NA values,"c(0.25, NA, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the minimum of the non-NA inputs,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the minimum of the inputs,100%,Pass
 ,"Inputs with invalid or out of range values (e.g., < 0 or > 1, Inf, character inputs)","c(0.25, 0.25, 5.7, 0.75)",9999,Error message,100%,Pass
 HSIarimean,Inputs for expected values,"c(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the arithmetic mean of the inputs,100%,Pass
 ,Inputs with NA values,"c(0.25, NA, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the arithmetic mean of the non-NA inputs,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the arithmetic mean of the inputs,100%,Pass
 ,"Inputs with invalid or out of range values (e.g., < 0 or > 1, Inf, character inputs)","c(0.25, 0.25, 5.7, 0.75)",9999,Error message,100%,Pass
 HSIgeomean,Inputs for expected values,"c(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the geometric mean of the inputs,100%,Pass
 ,Inputs with NA values,"c(0.25, NA, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the geometric mean of the non-NA inputs,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(0.25, 0.25, 0.5, 0.75)",9999,Numeric output between 0 and 1 equal to the geometric mean of the inputs,100%,Pass
 ,"Inputs with invalid or out of range values (e.g., < 0 or > 1, Inf, character inputs)","c(0.25, 0.25, 5.7, 0.75)",9999,Error message,100%,Pass
 HSIwarimean,Inputs for expected values,"c(0.25, 0.25, 0.5, 0.75), c(0.2, 0.3, 0.4, 0.1)",9999,Numeric output between 0 and 1 equal to the weighted arithmetic mean of the inputs,100%,Pass
 ,Inputs with NA values,"c(0.25, NA, 0.5, 0.75), c(0.2, NA, 0.4, 0.1)",9999,Numeric output between 0 and 1 equal to the weighted arithmetic mean of the non-NA inputs,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(0.25, 0.25, 0.5, 0.75), data.frame(0.2, 0.3, 0.4, 0.1)",9999,Numeric output between 0 and 1 equal to the weighted arithmetic mean of the inputs,100%,Pass
 ,"Inputs with invalid or out of range values (e.g., < 0 or > 1, Inf, character inputs)","c(0.25, 5.7, 0.5, 0.75), c(0.2, 0.3, 0.4, 0.1)",9999,Error message,100%,Pass
 ,Inputs with incorrect weighting,"c(0.25, 0.25, 0.5, 0.75), c(0.2, 0.96, 0.4, 0.1)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of weights supplied,"c(0.25, 0.25, 0.5, 0.75), c(0.2, 0.3, 0.2, 0.2, 0.1)",9999,Error message,100%,Pass
 HSIeqtn,Inputs for expected values,"‘alewifeJuv’, c(0, 1, 1), HSImetadata, NULL",100 per model,Numeric output between 0 and 1,100%,Pass
+,Inputs formatted as data frames or matrices,"‘alewifeJuv’, data.frame(0, 1, 1), HSImetadata, NULL",100 per model,Numeric output between 0 and 1,100%,Pass
 ,Inputs with incorrect HSImodelname,"‘alewifeJuvaes’, c(0, 1, 1), HSImetadata, NULL",100 per model,Error message,100%,Pass
 ,"Inputs with invalid SIV values (e.g., < 0 or > 1, Inf, character inputs)","‘alewifeJuv’, c(0, 3.2, 1), HSImetadata, NULL",100 per model,Error message,100%,Pass
 ,Inputs with incorrect number of SIV values,"‘alewifeJuv’, c(0, 1, 1, 0.75), HSImetadata, NULL",100 per model,Error message,100%,Pass
@@ -22,8 +27,10 @@ SIcalc,Inputs with expected values from HSImodels,"HSImodels barredowl, c(4, 40,
 ,Inputs with NA values for parameters,"Manual dataframe, c(4, NA, 60)",9999,Numeric outputs between 0 and 1 representing suitability index values for each non-NA input parameter,100%,Pass
 ,Inputs with invalid or out of range values ,"Manual dataframe, c(4, 40, 1000)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of values supplied,"Manual dataframe, c(4, 40, 60, 50)",9999,Error message,100%,Pass
+,Inputs formatted as data frames or matrices,,,,,
 Hucalc,Inputs for expected values,"c(0, 0.1, 1), 100, HSImin",9999,"Dataframe containing habitat quality, quantity, and index units",100%,Pass
 ,Inputs with NA values,"c(0, NA, 1), 100, HSImin",9999,"Dataframe containing habitat quality, quantity, and index units, excluding NA variables",100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(0, 0.1, 1), 100, HSImin)",9999,"Dataframe containing habitat quality, quantity, and index units",100%,Pass
 ,Inputs with invalid values,"c(0, 5.7, 1), 100, HSImin",9999,Error message,100%,Pass
 ,"Inputs with negative, infinite, or character habitat quantities","c(0, 0.1, 1), -100, HSImin",9999,Error message,100%,Pass
 HSIplotter,Inputs using HSImodels,"HSImodels barredowl, ""Barred_owl_curves.jpeg"")",349,Jpeg file with curves corresponding to HSImodels,100%,Pass
@@ -31,6 +38,7 @@ HSIplotter,Inputs using HSImodels,"HSImodels barredowl, ""Barred_owl_curves.jpeg
 ,"Inputs with invalid or out of range values (e.g., < 0 or > 1, Inf, character inputs)","Manual data frame of breakpoints with some incorrect values, ""Model_curves.jpeg"")",349,Error message,100%,Pass
 annualizer,Inputs for expected values,"c(0, 50), c(100, 100)",9999,Numeric output equal to the time-averaged value over the specified time horizon,100%,Pass
 ,Inputs with NA values,"c(0, NA), c(100, NA)",9999,NA,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(c(1,2 ,3 ,4)), data.frame(c(20, 30, 40, 50))",9999,Numeric output equal to the time-averaged value over the specified time horizon,100%,Pass
 ,Inputs with incorrect number of time values,"c(0, 50, 100), c(100, 100)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of benefit values,"c(0, 100), c(100, 50, 100)",9999,Error message,100%,Pass
 ,Inputs with out of order time values,"c(0, 50, 47), c(100, 100, 50)",9999,"Numeric output equal to the time-averaged value over the specified time horizon, ordered from smallest to largest ",100%,Pass
@@ -38,12 +46,14 @@ annualizer,Inputs for expected values,"c(0, 50), c(100, 100)",9999,Numeric outpu
 ,Inputs with invalid time values,"c(-4, 50), c(100, 100)",9999,Error message,100%,Pass
 ,Inputs with invalid benefit values,"c(0, 50), c(Inf, 100)",9999,Error message,100%,Pass
 CEfinder,Inputs for expected values,"c(0, 10, 20), c(0, 100, 200)",9999,"Vector of binary (0, 1) outputs reporting whether each plan is cost-effective",100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(c(20, 30, 40)), data.frame(c(30, 40, 50))",9999,"Vector of binary (0, 1) outputs reporting whether each plan is cost-effective",100%,Pass
 ,Inputs with NA values,"c(0, NA, 20), c(0, NA, 200)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of benefit values,"c(0, 10, 20, 30), c(0, 100, 200)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of cost values,"c(0, 10, 20), c(0, 100, 200, 300)",9999,Error message,100%,Pass
 ,Inputs with invalid benefit values,"c(0, 10, 20), c(Inf, 100, 200)",9999,Error message,100%,Pass
 ,Inputs with invalid cost values,"c(0, -10, 20), c(0, 100, 200)",9999,Error message,100%,Pass
 BBfinder,Inputs for expected values,"c(0, 10, 5), c(0, 100, 200), c(1, 1, 0)",9999,List containing summary of all restoration actions and best buy plans,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(c(0, 10, 5)), data.frame(c(0, 100, 200)), data.frame(c(1, 1, 0))",9999,List containing summary of all restoration actions and best buy plans,100%,Pass
 ,Inputs with NA values,"c(0, NA, 5), c(0, NA, 200), c(1, NA, 1)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of benefit values,"c(0, 10, 4, 5), c(0, 100, 200), c(1, 1, 0)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of cost values,"c(0, 10, 5), c(0, 100, 150, 200), c(1, 1, 0)",9999,Error message,100%,Pass
@@ -53,3 +63,4 @@ BBfinder,Inputs for expected values,"c(0, 10, 5), c(0, 100, 200), c(1, 1, 0)",99
 ,Inputs with invalid CE values,"c(0, 10, 5), c(0, 100, 200), c(2, 1, 0)",9999,Error message,100%,Pass
 ,Inputs with duplicate benefits,"c(10, 10, 5), c(0, 100, 200), c(1, 1, 0)",9999,List containing summary of restoration actions and best buy plans with lowest cost duplicate benefit retained,100%,Pass
 CEICAplotter,Inputs with expected values,"c(""Alt_1"", ""Alt_2"", ""Alt_3""), c(20, 30, 40), c(100, 75, 150), c(1, 0, 1), c(1, 0, 1), ""CEICA.jpeg""",300,Jpeg output,100%,Pass
+,Inputs formatted as data frames or matrices,"data.frame(c(""Alt_1"", ""Alt_2"", ""Alt_3"")), data.frame(c(20, 30, 40)), data.frame(c(100, 75, 150)), data.frame(c(1, 0, 1)), data.frame(c(1, 0, 1)), ""CEICA.jpeg""",300,Jpeg output,100%,Pass
