@@ -269,8 +269,8 @@ SIcalc_tester = function(test_type, iterations) {
   num_SIV = 0 # set initial number of SIV to zero
   input = c() # set initial input
   ## Make sure the test_type is correct
-  if (!test_type %in% c('manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs')) {
-    stop("Error: invalid test type. Please enter one of the following: 'manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs'.", call. = F)
+  if (!test_type %in% c('manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs', 'one_row_df')) {
+    stop("Error: invalid test type. Please enter one of the following: 'manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs', 'one_row_df'.", call. = F)
   }
   
   if (test_type == 'HSImodels') {
@@ -393,6 +393,10 @@ SIcalc_tester = function(test_type, iterations) {
         num_extra = sample(1:20, 1) # decide how many extra values to provide as inputs
         input = append(input, sample(0:1000, num_extra))
       }
+      ## Testing dataframe inputs
+      if (test_type == 'one_row_df') {
+        input <- as.data.frame(as.list(input), stringsAsFactors = FALSE)
+      }
       SIs = suppressWarnings(try(SIcalc(model, input), silent = TRUE)) # run SIcalc
       ## If every output is between zero and one or is NA, pass
       if (all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
@@ -405,7 +409,7 @@ SIcalc_tester = function(test_type, iterations) {
   # Pass rate
   if (test_type %in% c('HSImodels')) {
     return(passes / (iterations * 349) * 100) # if results should be valid, return the pass rate
-  } else if (test_type %in% c('manual', 'parameter_NA')) {
+  } else if (test_type %in% c('manual', 'parameter_NA','one_row_df')) {
     return(passes / iterations * 100)
   } else {
     return((iterations - passes) / (iterations) * 100) # if results should be errors, return the fail rate
@@ -418,6 +422,7 @@ SIcalc_tester('manual', 9999)
 SIcalc_tester('parameter_NA', 9999)
 SIcalc_tester('invalid', 9999)
 SIcalc_tester('mismatched_inputs', 9999)
+SIcalc_tester('one_row_df', 9999)
 ################################################################################
 
 # HUcalc
