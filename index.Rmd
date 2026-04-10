@@ -732,11 +732,11 @@ site.names <- c("Delta", "Clinton", "Vicksburg", "Jackson", "Pearl", "Brandon")
 PW.model <- HSImodels$pileatedwoodpeckerE
 PW <- data.frame(
   Site = site.names,
-  SIV1 = c(45, 30, 20, 2, 50, 33),
-  SIV2 = c(60, 20, 25, 3, 65, 42),
-  SIV3 = c(70, 5, 30, 5, 75, 51),
-  SIV4 = c(50, 7, 20, 1, 55, 37),
-  SIV5 = c(80, 54, 35, 38, 85, 58),
+  SIV1 = c(45, 30, 20, 2, 50, 75),
+  SIV2 = c(15, 20, 23, 3, 27, 30),
+  SIV3 = c(8, 5, 10, 2, 8, 10),
+  SIV4 = c(0.17, 0, 0.10, 0, 0.20, 0.18),
+  SIV5 = c(55, 40, 38, 38, 55, 60),
   SIV6 = c(NA, NA, NA, NA, NA, NA),
   SIV7 = c(NA, NA, NA, NA, NA, NA)
 )
@@ -746,7 +746,7 @@ BO.model <- HSImodels$barredowl
 BO <- data.frame(
   Site = site.names,
   SIV1 = c(2, 1, 2, 0, 1, 1),
-  SIV2 = c(10, 60, 20, 5, 45, 42),
+  SIV2 = c(10, 51, 20, 5, 45, 42),
   SIV3 = c(30, 45, 50, 25, 80, 95)
 )
 
@@ -758,8 +758,7 @@ GS <- data.frame(
   SIV2 = c("c", "b", "c", "a", "d", "e"),
   SIV3 = c(55, 30, 20, 15, 5, 38),
   SIV4 = c(70, 55, 30, 25, 30, 51),
-  SIV5 = c(65, 50, 25, 20, 12, 46),
-  stringsAsFactors = FALSE
+  SIV5 = c(50.8, 50, 25, 20, 12, 46)
 )
 
 # Mink (lacustrine model)
