@@ -27,7 +27,7 @@ SIcalc,Inputs with expected values from HSImodels,"HSImodels barredowl, c(4, 40,
 ,Inputs with NA values for parameters,"Manual dataframe, c(4, NA, 60)",9999,Numeric outputs between 0 and 1 representing suitability index values for each non-NA input parameter,100%,Pass
 ,Inputs with invalid or out of range values ,"Manual dataframe, c(4, 40, 1000)",9999,Error message,100%,Pass
 ,Inputs with incorrect number of values supplied,"Manual dataframe, c(4, 40, 60, 50)",9999,Error message,100%,Pass
-,Inputs formatted as data frames or matrices,,,,,
+,Inputs formatted as data frames or matrices,"Manual dataframe, c(4, 40, 60)",9999,Numeric outputs between 0 and 1 representing suitability index values for each input parameter,100%,Pass
 Hucalc,Inputs for expected values,"c(0, 0.1, 1), 100, HSImin",9999,"Dataframe containing habitat quality, quantity, and index units",100%,Pass
 ,Inputs with NA values,"c(0, NA, 1), 100, HSImin",9999,"Dataframe containing habitat quality, quantity, and index units, excluding NA variables",100%,Pass
 ,Inputs formatted as data frames or matrices,"data.frame(0, 0.1, 1), 100, HSImin)",9999,"Dataframe containing habitat quality, quantity, and index units",100%,Pass
