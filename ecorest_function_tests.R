@@ -264,71 +264,77 @@ HSIeqtn_tester('dataframe', 100)
 # SIcalc
 
 SIcalc_tester = function(test_type, iterations) {
-  passes = 0 # set number of passes to zero initially
-  count_NA = 0 # set initial number of NA columns to zero
-  num_SIV = 0 # set initial number of SIV to zero
-  input = c() # set initial input
-  ## Make sure the test_type is correct
-  if (!test_type %in% c('manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs', 'one_row_df')) {
-    stop("Error: invalid test type. Please enter one of the following: 'manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs', 'one_row_df'.", call. = F)
+  passes = 0
+  tests_run = 0
+  count_NA = 0
+  num_SIV = 0
+  input = c()
+  
+  if (!test_type %in% c('manual', 'invalid', 'parameter_NA', 'HSImodels',
+                        'mismatched_inputs', 'one_row_df', 'minmax_caps')) {
+    stop(
+      "Error: invalid test type. Please enter one of the following: 'manual', 'invalid', 'parameter_NA', 'HSImodels', 'mismatched_inputs', 'one_row_df', 'minmax_caps'.",
+      call. = FALSE
+    )
   }
   
   if (test_type == 'HSImodels') {
     for (model in HSImetadata$model) {
-      for (i in 1: iterations) {
-        input = c() # reset input vector
-        count_NA = 0 # reset number of NA columns
+      for (i in 1:iterations) {
+        input = c()
+        count_NA = 0
         curves = HSImodels[[model]]
+        
         for (col in 1:length(curves)) {
-          if (all(is.na(curves[,col])) == TRUE){
-            count_NA = count_NA + 1 # identify and count columns with only NA values (i.e., not used in that model)
-            ## For odd columns only, find out if parameter is used or NA and store in input
+          if (all(is.na(curves[, col])) == TRUE) {
+            count_NA = count_NA + 1
           }
           if (col %% 2 != 0) {
-            n_rows = sum(rowSums(!is.na(curves[col]))) # Find number of rows that aren't NA
-            input = c(input, as.character(sample(curves[1:n_rows, col],1,FALSE))) # Pull one value from the column to supply to SIcalc
+            n_rows = sum(!is.na(curves[, col]))
+            input = c(input, as.character(sample(curves[1:n_rows, col], 1, FALSE)))
           }
         }
-        SIs = try(SIcalc(curves, input)) # run SIcalc
-        ## If every output is between zero and one or is NA, pass
-        if (all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
+        
+        SIs = try(SIcalc(curves, input), silent = TRUE)
+        
+        if (!inherits(SIs, "try-error") && all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
           passes = passes + 1
         }
       }
     }
-  } 
-  ## If test type is not HSImodels
-  else {
+    
+  } else {
     for (test in 1:iterations) {
       input = c()
-      model = c() # reset model
-      num_vars = sample(1:10, 1) # randomly set the number of variables to a value between one and ten
+      model = c()
+      num_vars = sample(1:10, 1)
       var_names = paste0('var_', 1:num_vars)
       siv_names = paste0('var_', 1:num_vars, '.SIV')
+      var_is_cat = c()
+      
       for (var in 1:num_vars) {
-        num_SIV = sample(2:15, 1) # randomly set the number of SIVs between 2 and 15
-        cat = sample(0:1, 1) # randomly choose if variable is categorical (1) or not (0)
+        num_SIV = sample(2:15, 1)
+        cat = sample(0:1, 1)
+        var_is_cat[var] = cat
         
         if (cat == 1) {
-          categories = letters[1:num_SIV] # set categories to equal letters
+          categories = letters[1:num_SIV]
         } else {
-          categories = as.numeric(sort(sample(0:1000, num_SIV))) # if continuous, randomly select values between 0 and 1000
+          categories = as.numeric(sort(sample(0:1000, num_SIV)))
         }
-        ## Randomly generate SIVs
+        
         SIVs = runif(num_SIV, min = 0, max = 1)
-        ## Add NAs to equal 15
-        SIVs = c(SIVs, rep(NA, 15 - num_SIV)) # add NAs if needed
-        categories = c(categories, rep(NA, 15 - num_SIV)) # add NAs if needed
-        model = cbind(model, categories, SIVs) # bind data
+        SIVs = c(SIVs, rep(NA, 15 - num_SIV))
+        categories = c(categories, rep(NA, 15 - num_SIV))
+        model = cbind(model, categories, SIVs)
       }
-      colnames(model) = c(rbind(var_names, siv_names)) # name columns
-      model = data.frame(model) # convert to dataframe
-      model = model[rowSums(is.na(model)) < ncol(model), ] # Remove rows that are all NA
+      
+      colnames(model) = c(rbind(var_names, siv_names))
+      model = data.frame(model, stringsAsFactors = FALSE)
+      model = model[rowSums(is.na(model)) < ncol(model), ]
       
       model[] <- lapply(model, function(x) {
         num <- suppressWarnings(as.numeric(x))
-        
-        # convert only if every non-NA value successfully became numeric
         if (all(is.na(x) | !is.na(num))) {
           num
         } else {
@@ -336,47 +342,39 @@ SIcalc_tester = function(test_type, iterations) {
         }
       })
       
-      ## If test_type is NA values for breakpoints
       if (test_type == 'parameter_NA') {
-        odd_indices = seq(1, length(model), by = 2) # record all odd indices
-        na_col = sample(odd_indices, 1) # randomly select column to be NA
-        model[ , na_col:(na_col + 1)] = NA # set selected column and SIV to NA
-      } 
-      ## Generate input values based on random models
+        odd_indices = seq(1, length(model), by = 2)
+        na_col = sample(odd_indices, 1)
+        model[, na_col:(na_col + 1)] = NA
+      }
+      
       for (col in 1:length(model)) {
-        ## For odd columns
         if (col %% 2 != 0) {
-          ## If variable is numeric, sample from a uniform distribution
-          if(all(is.na(model[ , col]))) {
-            input = append(input, NA) # if NA column, append NA
-          } else if (!is.character(model[ , col])) {
-            ## If variable is numeric, pull min and max values and select a value between them
-            min_val = min(model[ , col], na.rm = T) 
-            max_val = max(model[ , col], na.rm = T)
+          if (all(is.na(model[, col]))) {
+            input = append(input, NA)
+          } else if (is.numeric(model[, col])) {
+            min_val = min(model[, col], na.rm = TRUE)
+            max_val = max(model[, col], na.rm = TRUE)
             input = append(input, runif(1, min = min_val, max = max_val))
           } else {
-            ## If variable is a character, select min and max corresponding integer, 
-            ## and randomly sample integer, then translate back to letter
-            min_val = min(match(model[ , col], letters), na.rm = T)
-            max_val = max(match(model[ , col], letters), na.rm = T)
+            min_val = min(match(model[, col], letters), na.rm = TRUE)
+            max_val = max(match(model[, col], letters), na.rm = TRUE)
             input = append(input, letters[sample(min_val:max_val, 1)])
           }
         }
       }
       
-      ## If testing invalid inputs
       if (test_type == 'invalid') {
-        inv_input = sample(1:length(input), 1) # randomly select one input value
-        invalid_type = sample(1:3, 1) # randomly select whether to replace with invalid value of same type, different type, or infinity
+        inv_input = sample(1:length(input), 1)
+        invalid_type = sample(1:3, 1)
+        
         if (invalid_type == 1) {
-          # If input is categorical, replace with invalid letter; otherwise add or subtract 1500
           if (input[inv_input] %in% letters) {
             input[inv_input] = letters[sample(16:26, 1)]
           } else {
-            input[inv_input] = as.numeric(input[inv_input]) + sample(c(1500, -1500), 1)
+            input[inv_input] = letters[sample(1:26, 1)]
           }
         } else if (invalid_type == 2) {
-          # If input is categorical, replace with continuous input and vice versa
           if (input[inv_input] %in% letters) {
             input[inv_input] = sample(c(1500, -1500), 1)
           } else {
@@ -385,44 +383,73 @@ SIcalc_tester = function(test_type, iterations) {
         } else {
           input[inv_input] = Inf
         }
-        
-        
       }
-      ## If testing incorrect number of inputs
+      
+      if (test_type == 'minmax_caps') {
+        continuous_vars <- which(var_is_cat == 0)
+        
+        if (length(continuous_vars) == 0) {
+          next
+        }
+        
+        chosen_var <- sample(continuous_vars, 1)
+        cap_col <- 2 * chosen_var - 1
+        input_index <- chosen_var
+        
+        x_num <- suppressWarnings(as.numeric(as.character(model[, cap_col])))
+        x_num <- x_num[!is.na(x_num)]
+        
+        if (length(x_num) == 0) {
+          next
+        }
+        
+        tests_run = tests_run + 1
+        
+        min_val <- min(x_num)
+        max_val <- max(x_num)
+        
+        if (sample(c(TRUE, FALSE), 1)) {
+          input[input_index] <- min_val - runif(1, 1, 100)
+        } else {
+          input[input_index] <- max_val + runif(1, 1, 100)
+        }
+      }
+      
       if (test_type == 'mismatched_inputs') {
-        num_extra = sample(1:20, 1) # decide how many extra values to provide as inputs
+        num_extra = sample(1:20, 1)
         input = append(input, sample(0:1000, num_extra))
       }
-      ## Testing dataframe inputs
+      
       if (test_type == 'one_row_df') {
         input <- as.data.frame(as.list(input), stringsAsFactors = FALSE)
       }
-      SIs = suppressWarnings(try(SIcalc(model, input), silent = TRUE)) # run SIcalc
-      ## If every output is between zero and one or is NA, pass
-      if (all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
+      
+      SIs = suppressWarnings(try(SIcalc(model, input), silent = TRUE))
+      
+      if (!inherits(SIs, "try-error") && all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
         passes = passes + 1
       }
     }
   }
   
-  
-  # Pass rate
-  if (test_type %in% c('HSImodels')) {
-    return(passes / (iterations * 349) * 100) # if results should be valid, return the pass rate
-  } else if (test_type %in% c('manual', 'parameter_NA','one_row_df')) {
+  if (test_type == 'HSImodels') {
+    return(passes / (iterations * 349) * 100)
+  } else if (test_type %in% c('manual', 'parameter_NA', 'one_row_df')) {
     return(passes / iterations * 100)
+  } else if (test_type == 'minmax_caps') {
+    return(passes / tests_run * 100)
   } else {
-    return((iterations - passes) / (iterations) * 100) # if results should be errors, return the fail rate
+    return((iterations - passes) / iterations * 100)
   }
-  
 }
 
 SIcalc_tester('HSImodels', 100)
 SIcalc_tester('manual', 9999)
 SIcalc_tester('parameter_NA', 9999)
-SIcalc_tester('invalid', 9999)
-SIcalc_tester('mismatched_inputs', 9999)
+SIcalc_tester('invalid', 9999) #now tests only wrong categorical inputs
+SIcalc_tester('mismatched_inputs', 9999) 
 SIcalc_tester('one_row_df', 9999)
+SIcalc_tester('minmax_caps', 9999)
 ################################################################################
 
 # HUcalc
