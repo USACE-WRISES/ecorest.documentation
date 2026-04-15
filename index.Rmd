@@ -713,19 +713,18 @@ Insert overview of applications:
 
 * Single-site existing condition assessment with multiple existing models 
 * User-specified model (San Francisco)
-* Comparison of Single-Site Habitat Restoration Alternatives (Huron Island)  
+* Comparison of Single-Site Habitat Restoration Alternatives with CEICA(Huron Island)  
 * Multi-site Restoration Prioritization (Hudson River)  
 
 
 #### *E.1. Existing condition assessment over multiple sites using multiple USFWS models*  
 
-This example demonstrates how `ecorest` can be used with U.S. Fish and Wildlife Service HSI models, included in the package, to assess existing condition over multiple project sites. The example uses packaged suitability curves and model equations for four species: Pileated Woodpecker (eastern range), Barred Owl, Fox Squirrel, and Mink. For each species, hypothetical field inputs for six sites were generated. Suitability curves were plotted with `HSIplotter()`, suitability indices were calculated with `SIcalc()`, and overall habitat suitability for each species and site was calculated with `HSIeqtn()`.
+This example demonstrates how `ecorest` can be used with U.S. Fish and Wildlife Service HSI models, included in the package, to assess existing condition over multiple project sites. The example uses packaged suitability curves and model equations for four species: Pileated Woodpecker (eastern range), Barred Owl, Gray Squirrel, and Mink. For each species, hypothetical field inputs for six sites were generated. Suitability curves were plotted with `HSIplotter()`, suitability indices were calculated with `SIcalc()`, and overall habitat suitability for each species and site was calculated with `HSIeqtn()`.
 
 ***Step 1:*** Load `ecorest`, packaged model objects, and example field inputs for all species.
 
 ```{r echo=TRUE}
 library(ecorest)
-
 site.names <- c("Delta", "Clinton", "Vicksburg", "Jackson", "Pearl", "Brandon")
 
 # Pileated Woodpecker (eastern range)
@@ -735,7 +734,7 @@ PW <- data.frame(
   SIV1 = c(45, 30, 20, 2, 50, 75),
   SIV2 = c(15, 20, 23, 3, 27, 30),
   SIV3 = c(8, 5, 10, 2, 8, 10),
-  SIV4 = c(0.17, 0, 0.10, 0, 0.20, 0.18),
+  SIV4 = c(0.25, 0, 0.10, 0, 0.5, 0.40),
   SIV5 = c(55, 40, 38, 38, 55, 60),
   SIV6 = c(NA, NA, NA, NA, NA, NA),
   SIV7 = c(NA, NA, NA, NA, NA, NA)
@@ -832,9 +831,92 @@ for(i in 1:nMNK){
 }
 
 
+```
+
+
+```{r echo=FALSE}
+SI.summary.E1 <- data.frame(
+  Site = site.names,
+  
+  PW_SIV1 = round(SI.PW[, 1], 2),
+  PW_SIV2 = round(SI.PW[, 2], 2),
+  PW_SIV3 = round(SI.PW[, 3], 2),
+  PW_SIV4 = round(SI.PW[, 4], 2),
+  PW_SIV5 = round(SI.PW[, 5], 2),
+  PW_SIV6 = round(SI.PW[, 6], 2),
+  PW_SIV7 = round(SI.PW[, 7], 2),
+  
+  BO_SIV1 = round(SI.BO[, 1], 2),
+  BO_SIV2 = round(SI.BO[, 2], 2),
+  BO_SIV3 = round(SI.BO[, 3], 2),
+  
+  GS_SIV1 = round(SI.GS[, 1], 2),
+  GS_SIV2 = round(SI.GS[, 2], 2),
+  GS_SIV3 = round(SI.GS[, 3], 2),
+  GS_SIV4 = round(SI.GS[, 4], 2),
+  GS_SIV5 = round(SI.GS[, 5], 2),
+  
+  MNK_SIV1 = round(SI.MNK[, 1], 2),
+  MNK_SIV2 = round(SI.MNK[, 2], 2),
+  MNK_SIV3 = round(SI.MNK[, 3], 2),
+  MNK_SIV4 = round(SI.MNK[, 4], 2),
+  MNK_SIV5 = round(SI.MNK[, 5], 2),
+  MNK_SIV6 = round(SI.MNK[, 6], 2)
+)
+
+knitr::kable(
+  SI.summary.E1,
+  caption = "Table ___. Suitability index values for all species across illustrative sites."
+)
+```
+
+
+***Step 4:*** Use `HSIeqnt()` to calculate overall habitat suitability for all species and sites.
+```{r echo=TRUE}
+# Pileated Woodpecker
+HSI.PW <- matrix(NA, nrow = nPW, ncol = 1)
+
+for(i in 1:nPW){
+  HSI.PW[i, ] <- HSIeqtn("pileatedwoodpeckerE", SI.PW[i, ], HSImetadata)
+}
+
+# Barred Owl
+HSI.BO <- matrix(NA, nrow = nBO, ncol = 1)
+
+for(i in 1:nBO){
+  HSI.BO[i, ] <- HSIeqtn("barredowl", SI.BO[i, ], HSImetadata)
+}
+
+# Gray Squirrel
+HSI.GS <- matrix(NA, nrow = nGS, ncol = 1)
+
+for(i in 1:nGS){
+  HSI.GS[i, ] <- HSIeqtn("graysquirrel", SI.GS[i, ], HSImetadata)
+}
+
+# Mink
+HSI.MNK <- matrix(NA, nrow = nMNK, ncol = 1)
+
+for(i in 1:nMNK){
+  HSI.MNK[i, ] <- HSIeqtn("minkRivLac", SI.MNK[i, ], HSImetadata)
+}
 
 ```
 
+```{r echo=FALSE}
+HSI.summary.E1 <- data.frame(
+  Site = site.names,
+  PW = round(HSI.PW[, 1], 2),
+  BO = round(HSI.BO[, 1], 2),
+  GS = round(HSI.GS[, 1], 2),
+  MNK = round(HSI.MNK[, 1], 2)
+)
+
+knitr::kable(
+  HSI.summary.E1,
+  caption = "Table ___. Habitat suitability index values for all species across sites."
+)
+```
 
 #### *E.2. User-specified Model: Tidal Habitats and Resilience Evaluation Model (THREM) (Reviewed and approved by the ECO-PCX)*  
 
@@ -936,6 +1018,63 @@ knitr::kable(
   caption = "Table ___. Example output for a user-specified Tidal Habitats and Resilience Evaluation Model."
 )
 
+
+```
+
+
+#### *E.3. Comparison of Single-Site Habitat Restoration Alternatives with CEICA*
+
+This example demonstrates how `ecorest` can be used to compare habitat restoration alternatives for a single project site using time-varying habitat benefits, annualized outputs, and cost-effectiveness and incremental cost analyses (CEICA). A hypothetical restoration site is evaluated under four alternatives: a future without project condition (FWOP), a low-intensity restoration plan, a moderate restoration plan, and a high-intensity restoration plan. Habitat outputs are first converted to average annual habitat units using `annualizer()`, and those annualized benefits are then used in CEICA.
+
+***Step 1:*** Define the alternatives, time horizon, and habitat outputs over time.
+
+```{r echo=TRUE}
+#library(ecorest)
+
+altnames <- c("FWOP", "Alt A", "Alt B", "Alt C")
+
+# Time horizon (years)
+timevec <- c(0, 10, 20, 30, 40, 50)
+
+# Habitat outputs over time for each alternative
+FWOP <- c(10, 10, 10, 10, 10, 10)
+AltA <- c(10, 18, 22, 25, 26, 26)
+AltB <- c(10, 20, 28, 32, 34, 34)
+AltC <- c(10, 22, 30, 35, 37, 38)
+
+# Project costs in millions of dollars
+cost <- c(0.0, 3.8, 6.2, 9.5)
+
+```
+
+***Step 2:*** Convert time-varying habitat outputs to average annual habitat units using `annualizer()`.
+```{r echo=TRUE}
+benefit <- c(
+  annualizer(timevec, FWOP),
+  annualizer(timevec, AltA),
+  annualizer(timevec, AltB),
+  annualizer(timevec, AltC)
+)
+
+```
+
+```{r echo=FALSE}
+Table.E2.inputs <- data.frame(
+  Alternative = altnames,
+  Annualized_Benefit = round(benefit, 2),
+  Cost_Million_USD = cost
+)
+
+knitr::kable(
+  Table.E2.inputs,
+  caption = "Table ___. Annualized habitat benefits and project costs for a hypothetical single-site restoration analysis."
+)
+```
+
+***Step 3:*** Conduct the cost-effectiveness and incremental cost analyses.
+```{r echo=TRUE}
+CE.E2 <- CEfinder(benefit, cost)
+BB.E2 <- BBfinder(benefit, cost, CE.E2)
 
 ```
 
