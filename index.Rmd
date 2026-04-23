@@ -16,6 +16,7 @@ output:
 ```{r options, echo=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE) 
 library(ecorest)
+library(viridis)
 ```
 
 
@@ -713,8 +714,8 @@ Insert overview of applications:
 
 * Single-site existing condition assessment with multiple existing models 
 * User-specified model (San Francisco)
-* Comparison of Single-Site Habitat Restoration Alternatives with CEICA(Huron Island)  
-* Multi-site Restoration Prioritization (Hudson River)  
+* Comparison of Single-Site Habitat Restoration Alternatives with CEICA  
+* Comparison of Multi-site Restoration Prioritization 
 
 
 #### *E.1. Existing condition assessment over multiple sites using multiple USFWS models*  
@@ -724,7 +725,7 @@ This example demonstrates how `ecorest` can be used with U.S. Fish and Wildlife 
 ***Step 1:*** Load `ecorest`, packaged model objects, and example field inputs for all species.
 
 ```{r echo=TRUE}
-library(ecorest)
+#library(ecorest)
 site.names <- c("Delta", "Clinton", "Vicksburg", "Jackson", "Pearl", "Brandon")
 
 # Pileated Woodpecker (eastern range)
@@ -1029,21 +1030,21 @@ This example demonstrates how `ecorest` can be used to compare habitat restorati
 ***Step 1:*** Define the alternatives, time horizon, and habitat outputs over time.
 
 ```{r echo=TRUE}
-#library(ecorest)
+
 
 altnames <- c("FWOP", "Alt A", "Alt B", "Alt C")
 
 # Time horizon (years)
 timevec <- c(0, 10, 20, 30, 40, 50)
 
-# Habitat outputs over time for each alternative
-FWOP <- c(10, 10, 10, 10, 10, 10)
-AltA <- c(10, 18, 22, 25, 26, 26)
-AltB <- c(10, 20, 28, 32, 34, 34)
-AltC <- c(10, 22, 30, 35, 37, 38)
+# Habitat outputs over time (acres)
+FWOP <- c(120, 118, 115, 112, 110, 108)
+AltA <- c(120, 140, 155, 165, 170, 172)
+AltB <- c(120, 155, 185, 205, 215, 220)
+AltC <- c(120, 145, 165, 175, 178, 180)
 
 # Project costs in millions of dollars
-cost <- c(0.0, 3.8, 6.2, 9.5)
+cost <- c(0.0, 4.5, 9.0, 18.5)
 
 ```
 
@@ -1076,10 +1077,149 @@ knitr::kable(
 CE.E2 <- CEfinder(benefit, cost)
 BB.E2 <- BBfinder(benefit, cost, CE.E2)
 
+# Identify the names of the best-buy alternatives
+bestbuy.names <- c()
+
+for(i in 1:nrow(BB.E2[[2]])){
+  bestbuy.names[i] <- altnames[
+    which(benefit == BB.E2[[2]][i, 1] & cost == BB.E2[[2]][i, 2])
+  ]
+}
+Table.E3 <- data.frame(
+  Alternative = bestbuy.names,
+  Benefit = round(BB.E2[[2]][, 1], 2),
+  Cost_Million_USD = round(BB.E2[[2]][, 2], 2),
+  Incremental_Cost_per_Unit = round(BB.E2[[2]][, 3], 2)
+)
+
+knitr::kable(
+  Table.E3,
+  caption = "Table ___. Incremental cost analysis summary for hypothetical single-site habitat restoration alternatives."
+)
+
 ```
 
-## **Appendix F: USACE Model Certification Review**
+***Step 4:*** Plot the CEICA results with `CEICAplotter()`.
+```{r echo=TRUE}
+CEICAplotter(
+  altnames,
+  benefit,
+  cost,
+  CE.E2,
+  BB.E2[[1]][, 4],
+  "CEICA.single.site.jpeg"
+)
+```
+This example annualized habitat acreage over time and used those benefits with project costs to conduct CEICA. The analysis showed that FWOP, Alt A, and Alt B were retained as best-buy plans, while Alt C was not retained in the incremental cost analysis. The table and figure summarize differences in benefit, cost, and incremental cost across alternatives.
 
+#### *E.3. Multi-site restoration prioritization using habitat units and CEICA*
+
+This example builds directly on Steps 1–4 from Example E.1. In that previous example, suitability indices were calculated with `SIcalc()` and habitat suitability indices were calculated with `HSIeqtn()` for four taxa across multiple sites. Here, those existing HSI results are carried forward and combined with site acreage to calculate habitat units for each taxon and site. Habitat units are then summed across taxa to produce a total ecological output for each site, and those total outputs are compared with project costs using cost-effectiveness and incremental cost analyses (CEICA).
+
+***Step 5:*** Assign restoration acreage to each site and calculate habitat units for each taxon.
+
+```{r echo=TRUE}
+# Hypothetical restoration acreage by site
+acres <- c(120, 175, 240, 300, 210, 160)
+# Calculate habitat units for each taxon at each site
+HU.PW <- HSI.PW[, 1] * acres
+HU.BO <- HSI.BO[, 1] * acres
+HU.GS <- HSI.GS[, 1] * acres
+HU.MNK <- HSI.MNK[, 1] * acres
+
+```
+
+```{r echo=FALSE}
+HU.summary.E3 <- data.frame(
+  Site = site.names,
+  Acres = acres,
+  PW_HU = round(HU.PW, 1),
+  BO_HU = round(HU.BO, 1),
+  GS_HU = round(HU.GS, 1),
+  MNK_HU = round(HU.MNK, 1)
+)
+
+knitr::kable(
+  HU.summary.E3,
+  caption = "Table ___. Habitat units for each taxon across illustrative restoration sites."
+)
+
+```
+
+***Step 6:*** Sum habitat units across taxa to generate a total ecological benefit for each site.
+```{r echo=TRUE}
+
+benefit <- HU.PW+HU.BO+HU.GS+HU.MNK
+
+#Hypothetical project costs in millions of dollars
+cost <- c(3.5, 6.0, 8.8, 14.0, 10.2, 7.1)
+
+```
+
+```{r echo=FALSE}
+
+Benefit.summary.E3 <- data.frame(
+  Site = site.names,
+  Total_Habitat_Units = round(benefit, 1),
+  Cost_Million_USD = round(cost, 1)
+)
+
+knitr::kable(
+  Benefit.summary.E3,
+  caption = "Table ___. Total habitat units and project costs used in the CEICA."
+)
+
+```
+
+***Step 7:*** Conduct the cost-effectiveness and incremental cost analyses.
+```{r echo=TRUE}
+
+CE.E3<- CEfinder(benefit, cost)
+BB.E3<- BBfinder(benefit, cost, CE.E3)
+
+#Identify the names of the best-buy sites
+bestbuy.names <- c()
+
+for(i in 1:nrow(BB.E3[[2]])){
+  bestbuy.names[i] <- site.names[
+    which(benefit == BB.E3[[2]][i, 1] & cost == BB.E3[[2]][i, 2])
+  ]
+}
+
+```
+
+```{r echo=FALSE}
+# Create summary table for incremental cost analysis
+Table.E3 <- data.frame(
+  Site = bestbuy.names,
+  Benefit_HU = round(BB.E3[[2]][, 1], 1),
+  Cost_Million_USD = round(BB.E3[[2]][, 2], 2),
+  Incremental_Cost_per_HU = round(BB.E3[[2]][, 3], 3)
+)
+
+knitr::kable(
+  Table.E3,
+  caption = "Table ___. Incremental cost analysis summary for multi-site restoration prioritization."
+)
+
+```
+
+***Step 8:***Plot the CEICA results with `CEICAplotter()`.
+
+```{r echo=TRUE}
+CEICAplotter(
+  site.names,
+  benefit,
+  cost,
+  CE.E3,
+  BB.E3[[1]][, 4],
+  "CEICA.multisite.jpeg"
+)
+```
+This example extends the HSI results from Example E.1 into a restoration planning context by converting habitat quality into habitat units and comparing total ecological outputs against project costs. The resulting CEICA summarizes how sites differ in both total habitat benefit and incremental cost.
+
+
+## **Appendix F: USACE Model Certification Review**
 
 Review comments were received on XXX. All comments follow the four-part comment structure of: (1) identify the problem, (2) describe the technical basis for the comment, (3) rate the significance or impact of the problem, and (4) recommend a mechanism for resolution.
 
