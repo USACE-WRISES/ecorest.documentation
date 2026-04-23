@@ -620,8 +620,7 @@ Communication
 
 ## **6. Summary**
 
-
-Insert brief review with some highlights. Major approach? Key findings? Model limitations?
+ecorest provides a standardized and flexible platform for applying index-based ecological models and decision-support tools in ecosystem restoration planning and related environmental analyses. The package compiles a large library of USFWS HSI models, provides functions for calculating suitability indices, habitat suitability indices, and habitat units, and integrates cost-effectiveness and incremental cost analyses within the same workflow. Together, these tools support consistent, transparent, and reproducible comparison of ecological conditions and restoration alternatives. While ecorest improves accessibility and reduces the need for ad hoc spreadsheet-based approaches, model results remain dependent on the assumptions, intended scope, and input limits of the underlying models. Accordingly, users should apply these tools with attention to model context, uncertainty, and appropriate communication of results.
 
 
 ## **Acknowledgements**
