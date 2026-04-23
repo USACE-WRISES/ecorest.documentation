@@ -207,8 +207,10 @@ Inputs include:
 The `HSIplotter` function returns a multi-panel *.jpeg figure showing all suitability curves included in a model (e.g., Figure 2).
 
 ```{r echo=TRUE}
+
 HSIplotter
 HSIplotter(HSImodels$barredowl, "Fig02.BarredOwl.jpeg")
+
 ```
 
 ![**Figure 2. Example output from `HSIplotter()` for the Barred Owl HSI model (Allen 1987).**](Fig02.BarredOwl.jpeg)
@@ -227,7 +229,9 @@ Inputs include:
 The `SIcalc` function returns a vector of suitability index values between zero and one corresponding to the given user inputs. 
 
 ```{r echo=TRUE}
+
 SIcalc
+
 ```
 
 
@@ -412,7 +416,6 @@ CEICAplotter
 
 ## **4. Evaluation**
 
-
 Ecological models typically rely on multiple variables or ecological processes, and in many cases present a variety of ecological outcomes. Models can quickly become complex system representations with many components, inputs, assumptions, and modules. Model evaluation is the process for ensuring that numerical tools are scientifically defensible and transparently developed. Evaluation is often referred to as verification or validation, but it in fact includes a family of methods ranging from peer-review to model testing to error checking (Schmolke et al. 2010). In this more general sense, evaluation should include the following (Grant and Swannack 2008): (1) assessing the reasonableness of model structure, (2) assessing functional relationships and verifying code, (3) evaluating model behavior relative to expected patterns, (4) comparing outcomes to empirical data, if possible, and (5) analyzing uncertainty in predictions. The USACE has established an ecological model certification process to ensure that planning models are sound and functional. These generally consist of evaluating tools relative to the three following categories: system quality, technical quality, and usability (EC 1105-2-412).
 
 
@@ -460,9 +463,9 @@ if (any(duplicated(timevec))) {
 
 ##### *4.1.3 Model updates: peer review and version control*
 
-R packages published and maintained on CRAN undergo automated reviews prior to initial package release and every package update to ensure that they are functional and compatible with multiple versions of R software, and that dependencies or reverse dependencies remain functional (Wickham and Bryan 2023). Every initial R package submission is subject to both this automated review and an additional human review to ensure that it meets the CRAN standards for quality assurance (Wickham and Bryan 2023). Version 1.0.0 of `ecorest` passed the automated and human reviews at initial submission, and automated reviews for updates to version 2.0.0 - 2.0.2. The newest version of `ecorest`, v2.0.2, is currently available on CRAN at https://cran.r-project.org/web/packages/ecorest/index.html, and older versions are archived on CRAN at https://cran.r-project.org/src/contrib/Archive/ecorest/. 
+R packages published and maintained on CRAN undergo automated reviews prior to initial package release and every package update to ensure that they are functional and compatible with multiple versions of R software, and that dependencies or reverse dependencies remain functional (Wickham and Bryan 2023). Every initial R package submission is subject to both this automated review and an additional human review to ensure that it meets the CRAN standards for quality assurance (Wickham and Bryan 2023). Version 1.0.0 of `ecorest` passed the automated and human reviews at initial submission, and automated reviews for updates to version 2.0.0 - 2.0.3. The newest version of `ecorest`, v2.0.2, is currently available on CRAN at https://cran.r-project.org/web/packages/ecorest/index.html, and older versions are archived on CRAN at https://cran.r-project.org/src/contrib/Archive/ecorest/. 
 
-**Should we include any more information here, including the CRAN reports themselves (maybe in an Appendix)?**
+
 
 #### *4.2. Technical Quality*  
 
@@ -527,19 +530,85 @@ knitr::asis_output(boxedHTML)
 
 ## **5. Application and Communication**
 
-Use examples from Ed's ebook?
+This section provides short examples illustrating how each function can be applied. These examples are intended to demonstrate basic use and typical inputs rather than full restoration analyse. Appendix E includes integrated examples showing how multiple functions can be used together to support ecosystem restoration decisions.
 
-Provide a brief walk-through of application of each function. Appendix provides integrated examples of functions used together for ecosystem restoration decisions. Other appendix provides user's guide.
+1) `HSIplotter()` is used to visualize suitability curves for an existing or user-specified model. This can help users inspect model structure, confirm variable ranges, and communicate how habitat variables are translated into suitability index values.
 
+```{r}
+library(ecorest)
+HSIplotter(HSImodels$barredowl, "barredowl_curves2.jpeg")
 
-Considerations for Application: What are some of the key limitations (geographic, numerical, system type)?  Look back at conceptual model limits, numerical limits, etc.  This should be a synthesis for future teams.  What’s not in the model that the user needs to know about? sensitivity and uncertainty analysis should be conducted on models prior to application.
+```
 
+2) `SIcalc()` calculates suitability index values for a set of habitat variables using the suitability curves for a given model. Inputs may include continuous variables, categorical variables, or NA values for excluded variables.
 
-Future improvement:  
+```{r}
+input.demo <- c(4, 51, 40)
+SIcalc(HSImodels$barredowl, input.demo)
+```
 
-* Add more models: modified mink, modified bluegill, oyster, HGM, etc.  
-* Planned adaptation of the model.  
-* Key research needs.  
+3) `HSIeqtn()` combines suitability index values into a single habitat suitability index using the model-specific equation stored in HSImetadata.
+
+```{r}
+HSIeqtn("barredowl", c(1, 1, 1), HSImetadata)
+```
+
+4) `HUcalc()` converts habitat quality into habitat units by combining an HSI score with habitat quantity, such as acres.
+```{r}
+HUcalc(
+  SI.out = c(0.8, 0.9, 1.0),
+  habitat.quantity = 150,
+  HSIfunc = HSIgeomean
+)
+```
+
+5) `annualizer()` converts time-varying ecological outputs into an average annual value over a specified time horizon. This is especially useful for restoration benefits that change through time.
+```{r}
+timevec <- c(0, 10, 20, 30)
+benefits <- c(100, 120, 150, 160)
+
+annualizer(timevec, benefits)
+```
+
+6) `CEfinder()` identifies which alternatives are cost-effective based on ecological benefits and costs.
+```{r}
+benefit <- c(10, 20, 25, 30)
+cost <- c(1.0, 2.5, 4.0, 6.0)
+
+CEfinder(benefit, cost)
+```
+
+7) `BBfinder()` uses the results of CEfinder() to identify best-buy alternatives through incremental cost analysis.
+Considerations for Application.
+
+```{r}
+
+benefit <- c(10, 20, 25, 30)
+cost <- c(1.0, 7.0, 6.0, 8.0)
+
+CE.out <- CEfinder(benefit, cost)
+BB.out <-BBfinder(benefit, cost, CE.out)
+```
+
+8) `CEICAplotter()` creates a summary plot showing all alternatives, the cost-effectiveness frontier, and the best-buy alternatives.
+
+```{r}
+altnames <- c("Alt A", "Alt B", "Alt C", "Alt D")
+library(viridis)
+CEICAplotter(
+  altnames,
+  benefit,
+  cost,
+  CE.out,
+  BB.out[[1]][, 4],
+  "ceica_example.jpeg"
+)
+```
+Together, these functions support a general workflow in which habitat variables are translated into suitability index values, combined into habitat suitability scores, scaled to habitat units, and then used to compare restoration alternatives through CEICA. Individual functions may be applied independently, but they are often most useful when used together in a structured restoration planning workflow.
+
+Application of these models requires careful attention to their intended scope, assumptions, and limitations. Key considerations include geographic relevance, system type, conceptual model boundaries, and numerical constraints. Many of the USFWS "blue book" models were developed for particular species, habitat types, regions, or environmental gradients. Users should also evaluate whether the modeled variables adequately represent the ecological processes of interest and recognize that important drivers may be omitted from a given model. In some cases, models may not account for temporal variability, landscape connectivity, disturbance regimes, management constraints, or interactions among habitat features that influence restoration outcomes. Numerical limits are also important, as model inputs and suitability curves are typically valid only within specified ranges and may produce misleading results if extrapolated beyond those bounds. As a result, these models should not be treated as complete representations of system behavior, but rather as structured decision-support tools with defined limits. Prior to application, users should assess model sensitivity and conduct uncertainty analysis to understand how assumptions, parameter choices, and input variability influence outputs. This is especially important when model results are used to compare alternatives or support restoration planning decisions. 
+
+For U.S. Army Corps of Engineers users, application of a new model also requires prior approval from the National Ecosystem Planning Center of Expertise (Eco-PCX).
 
 
 Communication  
@@ -706,17 +775,9 @@ A tutorial on how to conduct sensitivity and uncertainty analysis for HSI models
 
 
 
-
 ## **Appendix E: Example Applications**
 
-
-Insert overview of applications:  
-
-* Single-site existing condition assessment with multiple existing models 
-* User-specified model (San Francisco)
-* Comparison of Single-Site Habitat Restoration Alternatives with CEICA  
-* Comparison of Multi-site Restoration Prioritization 
-
+Appendix E provides example applications demonstrating how ecorest functions can be used individually and in combination to support ecosystem restoration analyses. The examples are intended to show practical workflows rather than prescribe a single approach. They include a single-site existing condition assessment using multiple packaged U.S. Fish and Wildlife Service models, application of a user-specified model using the San Francisco Tidal Habitats and Resilience Evaluation framework, comparison of single-site habitat restoration alternatives using cost-effectiveness and incremental cost analyses (CEICA), and comparison of multi-site restoration prioritization using habitat units and CEICA. Together, these examples illustrate how ecorest can support habitat assessment, restoration planning, and comparison of alternatives across a range of restoration decision contexts.
 
 #### *E.1. Existing condition assessment over multiple sites using multiple USFWS models*  
 
@@ -1216,6 +1277,7 @@ CEICAplotter(
   "CEICA.multisite.jpeg"
 )
 ```
+
 This example extends the HSI results from Example E.1 into a restoration planning context by converting habitat quality into habitat units and comparing total ecological outputs against project costs. The resulting CEICA summarizes how sites differ in both total habitat benefit and incremental cost.
 
 
