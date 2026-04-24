@@ -1,7 +1,7 @@
 ---
 title: "ecorest: Generic Platform for Index-Based Modeling"
-author: "S. Kyle McKay, Darixa D. Hernández-Abrams, Kiara C. Cushway, and Todd M. Swannack"
-date: "April 1st, 2026"
+author: "Darixa D. Hernández-Abrams, Kiara C. Cushway, Todd M. Swannack, and S. Kyle McKay"
+date: "April ___, 2026"
 output:
   html_document:
     toc: yes
@@ -13,11 +13,6 @@ output:
     toc: yes
     toc_depth: '4'
 ---
-```{r options, echo=FALSE, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, warning=FALSE) 
-library(ecorest)
-library(viridis)
-```
 
 
 ## **Abstract**   
@@ -33,14 +28,36 @@ The U.S. Army Corps of Engineers (USACE) engages in a large variety of decisions
 * Color schemes may seem non-traditional (i.e., non-rainbow arrays), but colors were chosen for maximum understanding by color deficient audiences. Nationwide, approximately 8% of men and 0.5% of women exhibit some form of color deficiency. In USACE, supervisors (GS-13 or higher) are ~74% male and ~26% female, which results in a 6% chance of a team member exhibiting color-blindness (1 out of 17). Among USACE decision makers, army officers (O4 or higher) are ~85% male and ~15% female, which results in a 7% chance of a team member exhibiting color-blindness (1 out of 15). Specifically, `ecorest` uses [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) color schemes. 
 
 
-```{r}
+```{r, echo=FALSE}
+
 #Clear local memory
-rm(list=ls(all=TRUE))
+#rm(list=ls(all=TRUE))
 
 ##########
 #Load all necessary R packages
-#library(viridis)    #Contains color-blind friendly color schemes
+library(viridis)    #Contains color-blind friendly color schemes
 library(ecorest)    #Contains habitat suitability and CEICA models
+
+# Load only data from the installed ecorest package
+data("HSImodels", package = "ecorest")
+data("HSImetadata", package = "ecorest")
+
+# Updated local functions from Git package-update project
+ecorest_update_path <- "E:/backup_Oct_20_25/EmergingApproaches_Ecomod/Ecorest_cert/Git_ecorest/ecorest-pkg-update2/R"
+
+source(file.path(ecorest_update_path, "HSIplotter.R"))
+source(file.path(ecorest_update_path, "SIcalc.R"))
+source(file.path(ecorest_update_path, "HSIarimean.R"))
+source(file.path(ecorest_update_path, "HSIgeomean.R"))
+source(file.path(ecorest_update_path, "HSIwarimean.R"))
+source(file.path(ecorest_update_path, "HSImin.R"))
+source(file.path(ecorest_update_path, "HSIeqtn.R"))
+source(file.path(ecorest_update_path, "HUcalc.R"))
+source(file.path(ecorest_update_path, "annualizer.R"))
+source(file.path(ecorest_update_path, "CEfinder.R"))
+source(file.path(ecorest_update_path, "BBfinder.R"))
+source(file.path(ecorest_update_path, "CEICAplotter.R"))
+
 ```
 
 
@@ -116,7 +133,7 @@ Incremental cost analysis is conducted on the set of cost-effective plans. This 
 Conceptual models provide a useful mechanism for many aspects of ecosystem restoration projects such as increasing understanding about a subject, identifying restoration alternatives, and facilitating dialog among team members (Fischenich 2008, USACE 2011). However, conceptual models also inform the development of quantitative ecological models and can document the general workflow of models (Grant and Swannack 2008, Swannack et al. 2012). Here, a conceptual model is presented to describe the general workflow of the `ecorest` computational platform. A stepwise conceptual model development process (Fischenich 2008) was used to develop the model workflow (Table 1), and Figure 1 summarizes the general flow of logic guiding the development of `ecorest`.
 
 
-```{r}
+```{r, echo=FALSE, include=FALSE, warning=FALSE}
 #Create empty table
 Table1 <- as.data.frame(matrix(NA, nrow = 5, ncol = 2))
 colnames(Table1) <- c("Step", "ecorest")
@@ -337,7 +354,7 @@ HUcalc
 ```
 
 
-#### *3.3. Decision Support Engine*  
+#### *3.3. Decision-Support Engine*  
 
 This section documents the decision support functions in `ecorest` used to compare restoration alternatives when benefits are non-monetary and costs are monetary (or otherwise expressed in different units). The functions implement standard cost-effectiveness and incremental cost analysis concepts by (1) converting time-varying outcomes to time-averaged metrics when needed, (2) identifying cost-effective alternatives that form the efficient frontier, (3) evaluating incremental trade-offs along that frontier to identify “best buys,” and (4) producing standardized tabular and graphical summaries for interpretation and reporting.
 
@@ -427,7 +444,7 @@ To confirm proper functionality, the `ecorest` package was rigorously assessed a
 
 *Workflow planning and consistency*: The `ecorest` package was designed with a common workflow to ensure that HSI models were implemented clearly and consistently. All models were coded with consistent formatting in `HSImetadata` and `HSImodels`, and naming conventions were implemented to ensure clarity when reviewing model parameters (Appendix B). 
 
-*Team-based coding*: Version 1.0.0 of `ecorest` was designed jointly by S.K. McKay and D.D. Hernandez-Abrams using team-based coding. Following package implementation, K.C. Cushway conducted a thorough review of model structure and accuracy by revisiting the model documentation from the USFWS for every HSI model in `ecorest` to identify potential errors and ensure code accuracy. Model updates or improvements are implemented in versions 2.0.0 - 2.0.2.
+*Team-based coding*: Version 1.0.0 of `ecorest` was designed jointly by S.K. McKay and D.D. Hernandez-Abrams using team-based coding. Following package implementation, K.C. Cushway conducted a thorough review of model structure and accuracy by revisiting the model documentation from the USFWS for every HSI model in `ecorest` to identify potential errors and ensure code accuracy. Model updates or improvements are implemented in versions 2.0.0 - 2.0.3.
 
 *Error reporting*: To communicate issues to users and reviewers, functions in `ecorest` were designed to generate error messages in the event of incorrect inputs or user errors. Common error messages in `ecorest` include 'incorrect number of input' errors, 'out of range' errors, and errors regarding incorrect formatting.
 
@@ -452,13 +469,13 @@ if (any(duplicated(timevec))) {
 ```
 
 
-*Documentation*: Comprehensive documentation of functions in `ecorest` was auto-generated by R during publication and can be accessed at https://cran.r-project.org/web/packages/ecorest/ecorest.pdf. Documentation includes descriptions of each function, their arguments and outputs, relevant references in the literature, and example applications. In addition, the authors documented all changes made to the package during error checking, including the nature of the changes, the reasoning for updates, and confirmation of implementation. **Should we include a link to these records?**
+*Documentation*: Comprehensive documentation of functions in `ecorest` was auto-generated by R during publication and can be accessed at https://cran.r-project.org/web/packages/ecorest/ecorest.pdf. Documentation includes descriptions of each function, their arguments and outputs, relevant references in the literature, and example applications. In addition, the authors documented all changes made to the package during error checking, including the nature of the changes, the reasoning for updates, and confirmation of implementation.
 
 ##### *4.1.2 Quality Control*
 
 *Interim code checking*: During model integration into R, code functionality was checked periodically for each HSI model to ensure that models were operational, implemented correctly, and performed as expected. In addition, all models with USFWS documentation that included test data sets (n = 152 of 349) were verified for accuracy using all available test data (Appendix C). In cases where `HSIeqtn` outputs did not match USFWS outputs, models were independently verified to determine whether mismatches were due to rounding errors, coding issues in `ecorest`, or probable errors in USWFS documentation.
 
-*Formal model testing*: Prior to release of `ecorest` version 2.0.2, every function in the package was tested to determine whether strategically selected inputs resulted in expected outcomes (Appendix C). For functions that require mathematical calculations, expected (i.e., correct) inputs, inputs with NA values, and invalid inputs were tested to ensure that functions properly handled both error messages and correct outputs. Where applicable, functions were also tested to ensure that inputs with mismatched lengths resulted in an error message. Each function was tested between 300 and 9999 times, depending on inputs (Appendix C).
+*Formal model testing*: Prior to release of `ecorest` version 2.0.3, every function in the package was tested to determine whether strategically selected inputs resulted in expected outcomes (Appendix C). For functions that require mathematical calculations, expected (i.e., correct) inputs, inputs with NA values, and invalid inputs were tested to ensure that functions properly handled both error messages and correct outputs. Where applicable, functions were also tested to ensure that inputs with mismatched lengths resulted in an error message. Each function was tested between 300 and 9999 times, depending on inputs (Appendix C).
 
 
 ##### *4.1.3 Model updates: peer review and version control*
@@ -482,7 +499,7 @@ The functions in `ecorest` are designed to be user-friendly and are meant to sim
 *Technical support*: Help text for every function in `ecorest` can be accessed in R software using the format `?functionname` or `help(functionname)` (e.g., `?HSIeqtn` or `help(HSIeqtn)`). Help text includes definitions for input and output values, useful references, and example applications to guide the user in proper application of functions. In addition, documentation for every function in the `ecorest` package was auto-generated by R during package submission and can be accessed at: https://cran.r-project.org/web/packages/ecorest/ecorest.pdf. Contact information for the package maintainer (S.K. McKay) is accessible at https://cran.r-project.org/web/packages/ecorest/index.html and can be used to request clarification not provided by package documentation or report bugs or errors.
 
 Example of help text for `HSIeqtn`:
-```{r}
+```{r, echo=FALSE}
 
 # Example of help document
 helpfile <- utils:::.getHelpFile(help(HSIeqtn))
@@ -528,14 +545,14 @@ knitr::asis_output(boxedHTML)
 
 *USACE compliance*: Models included in `HSImodels` and `HSImetadata` are certified for USACE application by ECO-PCX. However, the `HSImin`, `HSIarimean`, `HSIwarimean`, and `HSIgeomean` functions are meant to assist users in easily applying and conducting analyses for models that are not included in `HSImodels` and `HSImetadata`. Unless otherwise specified by a project team, models implemented using these functions are **not** certified for use and will need additional approvals from ECO-PCX prior to application.
 
-## **5. Application and Communication**
+## **5. Application**
 
 This section provides short examples illustrating how each function can be applied. These examples are intended to demonstrate basic use and typical inputs rather than full restoration analyse. Appendix E includes integrated examples showing how multiple functions can be used together to support ecosystem restoration decisions.
 
 1) `HSIplotter()` is used to visualize suitability curves for an existing or user-specified model. This can help users inspect model structure, confirm variable ranges, and communicate how habitat variables are translated into suitability index values.
 
 ```{r}
-library(ecorest)
+
 HSIplotter(HSImodels$barredowl, "barredowl_curves2.jpeg")
 
 ```
@@ -594,7 +611,7 @@ BB.out <-BBfinder(benefit, cost, CE.out)
 
 ```{r}
 altnames <- c("Alt A", "Alt B", "Alt C", "Alt D")
-library(viridis)
+
 CEICAplotter(
   altnames,
   benefit,
@@ -609,13 +626,6 @@ Together, these functions support a general workflow in which habitat variables 
 Application of these models requires careful attention to their intended scope, assumptions, and limitations. Key considerations include geographic relevance, system type, conceptual model boundaries, and numerical constraints. Many of the USFWS "blue book" models were developed for particular species, habitat types, regions, or environmental gradients. Users should also evaluate whether the modeled variables adequately represent the ecological processes of interest and recognize that important drivers may be omitted from a given model. In some cases, models may not account for temporal variability, landscape connectivity, disturbance regimes, management constraints, or interactions among habitat features that influence restoration outcomes. Numerical limits are also important, as model inputs and suitability curves are typically valid only within specified ranges and may produce misleading results if extrapolated beyond those bounds. As a result, these models should not be treated as complete representations of system behavior, but rather as structured decision-support tools with defined limits. Prior to application, users should assess model sensitivity and conduct uncertainty analysis to understand how assumptions, parameter choices, and input variability influence outputs. This is especially important when model results are used to compare alternatives or support restoration planning decisions. 
 
 For U.S. Army Corps of Engineers users, application of a new model also requires prior approval from the National Ecosystem Planning Center of Expertise (Eco-PCX).
-
-
-Communication  
-
-* Identify audience: Who is using the results of the model?  
-* Visualization: How are data used, interpreted, presented?  Can this be modified to increase understanding of the model?  
-* Develop communication plan: What is the target?  Training plans, tutorials, outreach.  Community adoption strategy – what is the sales plan?
 
 
 ## **6. Summary**
@@ -988,7 +998,7 @@ The example below reads in the San Francisco model input table and field data, p
 ***Step 1:*** Load ecorest, model csv file, and model input csv file
 ```{r echo=TRUE}
 #load ecorest package to use HSIplotter and SIcalc() functions
-library(ecorest)
+#library(ecorest)
 
 # Read field inputs and user-specified suitability curves
 marsh.field <- read.csv("SF-TM-HEI_FieldData.csv") # field inputs
