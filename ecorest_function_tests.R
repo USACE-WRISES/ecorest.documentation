@@ -299,7 +299,7 @@ SIcalc_tester = function(test_type, iterations) {
           }
         }
         
-        SIs = try(SIcalc(curves, input), silent = TRUE)
+        SIs = suppressWarnings(try(SIcalc(curves, input), silent = TRUE))
         
         if (!inherits(SIs, "try-error") && all(SIs >= 0 & SIs <= 1 | is.na(SIs))) {
           passes = passes + 1
