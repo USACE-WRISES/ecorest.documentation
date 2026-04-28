@@ -197,6 +197,8 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
        }
        num_SIV = (ncol(curves) - count_NA)/2 # calculate the number of input variables
        input_vals = runif(num_SIV, 0, 1) # generate random test input from a uniform distribution between 0 and 1
+       model.loc <- which(HSImetadata$model == model) # Find the location of the model in HSImetadata
+       names(input_vals) = names(which(colSums(!is.na(HSImetadata[model.loc, 9:40])) > 0))
        ## If the test is for an invalid HSImodelname:
        if (test_type == 'invalid_name') {
          new_letters = str_flatten(sample(letters, 3)) # randomly choose three letters to tack on to the model name
@@ -226,12 +228,14 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
        ## If the test is for the wrong number of SIV values:
        else if (test_type == 'wrong_num_SIV') {
          num_extra = sample(1:20, 1) # randomly decide how many extra SIV values to include (between 1 and 20)
+         extra_labels = paste0("SIV", 24:(24 + num_extra - 1))
          extra_SIV = runif(num_extra, min = 0, max = 1) # sample num_extra random values between zero and one
          input_vals = append(input_vals, extra_SIV)
+         names(input_vals)[(num_SIV + 1):(num_SIV + num_extra)] = extra_labels
        } else if (test_type == 'dataframe') {
-         input_vals = data.frame(input_vals)
+         input_vals = data.frame(t(input_vals))
        }
-       HSI = try(HSIeqtn(model, input_vals, HSImetadata, exclude), silent = TRUE) # calculate overall HSI if possible
+       HSI = suppressWarnings(try(HSIeqtn(model, input_vals, HSImetadata, exclude), silent = TRUE)) # calculate overall HSI if possible
        if (HSI >= 0 & HSI <= 1) {
          passes = passes + 1
          #print(model)
@@ -246,7 +250,7 @@ HSIeqtn_tester = function(test_type = 'expected', iterations = 100){
      } 
    }
   # Pass rate
-  if (test_type %in% c('expected', 'NA', 'dataframe')) {
+  if (test_type %in% c('expected', 'NA', 'dataframe', 'wrong_num_SIV')) {
     return(passes / (iterations * 349) * 100) # if results should be valid, return the pass rate
   } else {
     return(((iterations * 349) - passes) / (iterations * 349) * 100) # if results should be errors, return the fail rate
