@@ -568,7 +568,7 @@ input.demo <- c(4, 51, 40)
 SIcalc(HSImodels$barredowl, input.demo)
 ```
 
-3) `HSIeqtn()` combines suitability index values into a single habitat suitability index using the model-specific equation stored in HSImetadata.
+3) `HSIeqtn()` combines suitability index values into a single habitat suitability index using the model-specific equation stored in HSImetadata.These equations correspond to existing USFWS “blue book” HSI models that have been approved for USACE use.
 
 ```{r}
 HSIeqtn("barredowl", c("SIV1" = 1, "SIV2" = 1, "SIV3" = 1), HSImetadata)
@@ -583,22 +583,22 @@ HUcalc(
 )
 ```
 
-5) `HSIarimean()` takes the arithmetic mean of user inputs, which allows higher suitability scores to compensate for lower scores.
+5) `HSIarimean()` takes the arithmetic mean of user inputs, which allows higher suitability scores to compensate for lower scores. Although this function provides general methods for aggregating suitability index values, USACE applications should use only models that have received appropriate Eco-PCX review and approval.
 ```{r}
 HSIarimean(c(0.5, 0.3, 0.7))
 
 ```
 
-6) `HSIwarimean()` takes the weighted arithmetic mean of user inputs according to user-provided weights that sum to one. This allows users to emphasize the importance of certain environmental conditions for overall habitat suitability.
+6) `HSIwarimean()` takes the weighted arithmetic mean of user inputs according to user-provided weights that sum to one. This allows users to emphasize the importance of certain environmental conditions for overall habitat suitability.Although this function provides general methods for aggregating suitability index values, USACE applications should use only models that have received appropriate Eco-PCX review and approval.
 ```{r}
 HSIwarimean(x = c(0.3, 0.7, 1), w = c(0.3, 0.3, 0.4))
 ```
 
-7) `HSIgeomean()` takes the geometric mean of user inputs, which ensures that one completely unsuitable environmental condition will result in unsuitable habitat for a species.
+7) `HSIgeomean()` takes the geometric mean of user inputs, which ensures that one completely unsuitable environmental condition will result in unsuitable habitat for a species.Although this function provides general methods for aggregating suitability index values, USACE applications should use only models that have received appropriate Eco-PCX review and approval.
 ```{r}
 HSIgeomean(c(0, 0.2, 1))
 ```
-8) `HSImin()` takes a limiting factor approach, such that the overall HSI score is equal to the lowest suitability index.
+8) `HSImin()` takes a limiting factor approach, such that the overall HSI score is equal to the lowest suitability index.Although this function provides general methods for aggregating suitability index values, USACE applications should use only models that have received appropriate Eco-PCX review and approval.
 ```{r}
 HSImin(c(0.4, 0.3, 0.8))
 ```
@@ -663,11 +663,9 @@ For U.S. Army Corps of Engineers users, application of a new model also requires
 ## **Acknowledgements**
 
 
-Funding: EMRRP and ANSRP's focus on Next Generation Ecological Modeling
+Funding: EMRRP and ANSRP's focus on Next Generation Ecological Modeling.
 
 Ideas and collaboration: Nate Richards, Tyler Keys, Christina Saltus, Brook Herman, Carra Carrillo, Iris Foxfoot, Colton Shaw
-
-Testers: Michael Dougherty, Mick Porter, Danny Allen, Robin Armetta, etc.
 
 
 ## **References**
@@ -701,7 +699,9 @@ McKay S.K., Richards N., and Swannack T.M.  2019.  Aligning ecological model dev
 
 McKay, S.K., Richards, N., and Swannack T.M. 2022. Ecological model development: evaluation of system quality. ERDC/TN EMRRP-EBA-26. U.S. Army Engineer Research and Development Center, Vicksburg, Mississippi.
 
-McMahin, TE, JW Terrell, and PC Nelson. 1984. Habitat suitability information: Walleye. U.S. Fish Wildl. Serv. FWS/OBS-82/10.56. 43 pp. 
+McMahin, TE, JW Terrell, and PC Nelson. 1984. Habitat suitability information: Walleye. U.S. Fish Wildl. Serv. FWS/OBS-82/10.56. 43 pp.
+
+Murray, Elizabeth O., Darixa D. Hernandez-Abrams, and Todd M. Swannack. 2021. Development of Tidal Habitats and Resilience Evaluation Model (THREM) for Evaluation of Ecosystem Alternatives. Internal model documentation. U.S. Army Corps of Engineers.
 
 Palesh G. and Anderson D. 1990. Modification of the habitat suitability index model for the bluegill (Lepomis macrochirus) for winter conditions for the Upper Mississippi River backwater habitats. 
 
@@ -738,12 +738,13 @@ Wickham, H. and Bryan, J. 2023. R packages: organize, test, document, and share 
 
 ## **Appendix A: Glossary and Acronyms**
 
-
+* *CEICA*: Cost-Effective Incremental Cost Analysis
 * *Eco-PCX*: U.S. Army Corps of Engineers' ecosystem restoration planning center of expertise.  
 * *[ecorest](https://cran.r-project.org/web/packages/ecorest/index.html)*: R-package for conducting analyses informing ecosystem restoration decisions as described in this document.
 * *ERDC*: U.S. Army Engineer Research and Development Center.  
 * *FWOP*: Future WithOut Project Conditions.
-* *[R](https://cran.r-project.org/)*: Statistical software language used to program ecorest (R Core Team 2019).  
+* *[R](https://cran.r-project.org/)*: Statistical software language used to program ecorest (R Core Team 2019).
+* *THREM*: Tidal Habitats and Resilience Evaluation Model
 * *USACE*: U.S. Army Corps of Engineers.  
 * *USFWS*: U.S. Fish and Wildlife Service.  
 
@@ -819,7 +820,7 @@ Appendix E provides example applications demonstrating how `ecorest` functions c
 
 This example demonstrates how `ecorest` can be used with U.S. Fish and Wildlife Service HSI models, included in the package, to assess existing condition over multiple project sites. The example uses packaged suitability curves and model equations for four species: Pileated Woodpecker (eastern range), Barred Owl, Gray Squirrel, and Mink. For each species, hypothetical field inputs for six sites were generated. Suitability curves were plotted with `HSIplotter()`, suitability indices were calculated with `SIcalc()`, and overall habitat suitability for each species and site was calculated with `HSIeqtn()`.
 
-***Step 1:*** Load `ecorest`, packaged model objects, and example field inputs for all species.
+***Step 1:*** Load `ecorest`, model objects, and example field inputs for all species.
 
 ```{r echo=TRUE}
 #library(ecorest)
@@ -880,14 +881,16 @@ HSIplotter(GS.model, "GS.jpeg")
 HSIplotter(MNK.model, "MNK.jpeg")
 ```
 
-![Figure ___. Pileated Woodpecker (eastern range) suitability curves.](PW.jpeg)
+![Figure E.1.1. Pileated Woodpecker (eastern range) suitability curves.](PW.jpeg)
 
-![Figure ___. Barred Owl suitability curves.](BO.jpeg)
+![Figure E.1.2. Barred Owl suitability curves.](BO.jpeg)
 
-![Figure ___. Gray Squirrel suitability curves.](GS.jpeg)
+![Figure E.1.3. Gray Squirrel suitability curves.](GS.jpeg)
 
-![Figure ___. Mink (lacustrine model) suitability curves.](MNK.jpeg)
+![Figure E.1.4. Mink (lacustrine model) suitability curves.](MNK.jpeg)
+
 ***Step 3:*** Use `SIcalc()` to calculate suitability indices for all species.
+
 ```{r echo=TRUE}
 # Pileated Woodpecker
 input.PW <- PW[, 2:8]
@@ -968,7 +971,7 @@ SI.summary.E1 <- data.frame(
 
 knitr::kable(
   SI.summary.E1,
-  caption = "Table ___. Suitability index values for all species across illustrative sites."
+  caption = "Table E.1.1. Suitability index values for all species across hypothetical sites."
 )
 ```
 
@@ -1016,13 +1019,13 @@ HSI.summary.E1 <- data.frame(
 
 knitr::kable(
   HSI.summary.E1,
-  caption = "Table ___. Habitat suitability index values for all species across sites."
+  caption = "Table E.1.2. Habitat suitability index values for all species across sites."
 )
 ```
 
 #### *E.2. User-specified Model: Tidal Habitats and Resilience Evaluation Model (THREM) (Reviewed and approved by the ECO-PCX)*  
 
-This example demonstrates how a user-specified habitat suitability model can be applied using input tables developed outside of the built-in USFWS HSI library. All new user-specified models intended to be used in a USACE project require formal review and approval via the Eco-PCX. The San Francisco Tidal Habitats and Resilience Evaluation Model (THREM) was developed for the South San Francisco Bay Shoreline Phase II study to evaluate tidal marsh restoration alternatives. The model was developed iteratively with the model development team, a project development team and project stakeholders via a series of workshops hosted by the USACE San Francisco District (Murray et al. 2021). The model uses four suitability variables: percent tidal range (PTR), average marsh age (MA), access to high tide refugia (HTR), and percent marsh shoreward edge with ecotone transition (E). These variables are scored using user-defined suitability curves and then combined into an overall habitat suitability index.
+This example demonstrates how a user-specified habitat suitability model can be applied using input tables developed outside of the built-in USFWS HSI library. All new user-specified models intended to be used in a USACE project require formal review and approval via the Eco-PCX. The San Francisco Tidal Habitats and Resilience Evaluation Model (THREM) was developed for the South San Francisco Bay Shoreline Phase II study to evaluate tidal marsh restoration alternatives (Murray, Hernandez-Abrams, and Swannack, 2021). The model was developed iteratively with the model development team, a project development team and project stakeholders via a series of workshops hosted by the USACE San Francisco District (Murray et al. 2021). The model uses four suitability variables: percent tidal range (PTR), average marsh age (MA), access to high tide refugia (HTR), and percent marsh shoreward edge with ecotone transition (E). These variables are scored using user-defined suitability curves and then combined into an overall habitat suitability index.
 
 The example below reads in the San Francisco model input table and field data, plots the user-specified suitability curves using `HSIplotter()`, calculates suitability indices for each variable using `SIcalc()`, computes an overall HSI using the project-specific model equation, and then estimates habitat units for a 300-acre restoration area using `HUcalc()`.
 
@@ -1039,7 +1042,7 @@ marsh.model <- read.csv("SF-TM-HEI_InputData.csv") #user-specified curves
 ```{r echo=FALSE}
 knitr::kable(
   marsh.field,
-  caption = "Table___.THREM field input data."
+  caption = "Table E.2.1.THREM field input data."
 )
 marsh.model.view <- marsh.model
 colnames(marsh.model.view) <- c("PTR", "PTR.SIV", "MA", "MA.SIV", "HTR", "HTR.SIV", "E", "E.SIV")
@@ -1048,7 +1051,7 @@ colnames(marsh.model.view) <- c("PTR", "PTR.SIV", "MA", "MA.SIV", "HTR", "HTR.SI
 ```{r echo=FALSE}
 knitr::kable(
   marsh.model.view,
-  caption = "Table___.THREM user-specified suitability curve input data."
+  caption = "Table E.2.2.THREM user-specified suitability curve input data."
 )
 ```
 
@@ -1059,7 +1062,7 @@ knitr::kable(
 HSIplotter(marsh.model, "marsh.plot.jpeg")
 
 ```
-![Figure ___. Tidal Habitats and Resilience Evaluation Model](marsh.plot.jpeg)
+![Figure E.2.1. Tidal Habitats and Resilience Evaluation Model](marsh.plot.jpeg)
 ***Step 3:*** Use SIcalc() to calculate SI units.
 ```{r echo=TRUE}
 # Extract alternative input values
@@ -1085,7 +1088,7 @@ SI.marsh.out <- data.frame(
 
 knitr::kable(
   SI.marsh.out,
-  caption = "Table___: Suitability index values calculated using SIcalc()."
+  caption = "Table E.2.3.: Suitability index values calculated using SIcalc()."
 )
 ```
 
@@ -1103,7 +1106,7 @@ marsh.HU <- do.call(rbind, lapply(1:nmarsh, function(i) {
 ```
 
 
-![Figure ___. Tidal Habitats and Resilience Evaluation Model HSI Equation](THREM_model_equation.jpg)
+![Figure E.2.2. Tidal Habitats and Resilience Evaluation Model HSI Equation](THREM_model_equation.jpg)
 ```{r echo=FALSE}
 # Final output table
 final.marsh <- data.frame(
@@ -1117,7 +1120,7 @@ final.marsh <- data.frame(
 )
 knitr::kable(
   final.marsh,
-  caption = "Table ___. Example output for a user-specified Tidal Habitats and Resilience Evaluation Model."
+  caption = "Table E.2.4. Example output for a user-specified Tidal Habitats and Resilience Evaluation Model."
 )
 
 
@@ -1169,7 +1172,7 @@ Table.E2.inputs <- data.frame(
 
 knitr::kable(
   Table.E2.inputs,
-  caption = "Table ___. Annualized habitat benefits and project costs for a hypothetical single-site restoration analysis."
+  caption = "Table E.3.1. Annualized habitat benefits and project costs for a hypothetical single-site restoration analysis."
 )
 ```
 
@@ -1195,7 +1198,7 @@ Table.E3 <- data.frame(
 
 knitr::kable(
   Table.E3,
-  caption = "Table ___. Incremental cost analysis summary for hypothetical single-site habitat restoration alternatives."
+  caption = "Table E.3.2. Incremental cost analysis summary for hypothetical single-site habitat restoration alternatives."
 )
 
 ```
@@ -1213,7 +1216,7 @@ CEICAplotter(
 ```
 This example annualized habitat acreage over time and used those benefits with project costs to conduct CEICA. The analysis showed that FWOP, Alt A, and Alt B were retained as best-buy plans, while Alt C was not retained in the incremental cost analysis. The table and figure summarize differences in benefit, cost, and incremental cost across alternatives.
 
-#### *E.3. Multi-site restoration prioritization using habitat units and CEICA*
+#### *E.4. Multi-site restoration prioritization using habitat units and CEICA*
 
 This example builds directly on Steps 1–4 from Example E.1. In that previous example, suitability indices were calculated with `SIcalc()` and habitat suitability indices were calculated with `HSIeqtn()` for four taxa across multiple sites. Here, those existing HSI results are carried forward and combined with site acreage to calculate habitat units for each taxon and site. Habitat units are then summed across taxa to produce a total ecological output for each site, and those total outputs are compared with project costs using cost-effectiveness and incremental cost analyses (CEICA).
 
@@ -1242,7 +1245,7 @@ HU.summary.E3 <- data.frame(
 
 knitr::kable(
   HU.summary.E3,
-  caption = "Table ___. Habitat units for each taxon across illustrative restoration sites."
+  caption = "Table E.4.1. Habitat units for each taxon across hypothetical restoration sites."
 )
 
 ```
@@ -1267,7 +1270,7 @@ Benefit.summary.E3 <- data.frame(
 
 knitr::kable(
   Benefit.summary.E3,
-  caption = "Table ___. Total habitat units and project costs used in the CEICA."
+  caption = "Table E.4.2. Total habitat units and project costs used in the CEICA."
 )
 
 ```
@@ -1300,7 +1303,7 @@ Table.E3 <- data.frame(
 
 knitr::kable(
   Table.E3,
-  caption = "Table ___. Incremental cost analysis summary for multi-site restoration prioritization."
+  caption = "Table E.4.3. Incremental cost analysis summary for multi-site restoration prioritization."
 )
 
 ```
