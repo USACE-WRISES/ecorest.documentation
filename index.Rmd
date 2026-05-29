@@ -28,37 +28,40 @@ The U.S. Army Corps of Engineers (USACE) engages in a large variety of decisions
 * Color schemes may seem non-traditional (i.e., non-rainbow arrays), but colors were chosen for maximum understanding by color deficient audiences. Nationwide, approximately 8% of men and 0.5% of women exhibit some form of color deficiency. In USACE, supervisors (GS-13 or higher) are ~74% male and ~26% female, which results in a 6% chance of a team member exhibiting color-blindness (1 out of 17). Among USACE decision makers, army officers (O4 or higher) are ~85% male and ~15% female, which results in a 7% chance of a team member exhibiting color-blindness (1 out of 15). Specifically, `ecorest` uses [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html) color schemes. 
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, include=FALSE,echo=TRUE, message=FALSE}
 
 #Clear local memory
-#rm(list=ls(all=TRUE))
+rm(list=ls(all=TRUE))
 
-##########
 #Load all necessary R packages
 library(viridis)    #Contains color-blind friendly color schemes
 library(ecorest)    #Contains habitat suitability and CEICA models
 
 # Load only data from the installed ecorest package
-data("HSImodels", package = "ecorest")
-data("HSImetadata", package = "ecorest")
+#data("HSImodels", package = "ecorest")
+#data("HSImetadata", package = "ecorest")
 
-# Updated local functions from Git package-update project
-ecorest_update_path <- "E:/backup_Oct_20_25/EmergingApproaches_Ecomod/Ecorest_cert/Git_ecorest/ecorest-pkg-update2/R"
+# Updated local functions from Git package-update project- Darixa
+#ecorest_update_path <- "E:/backup_Oct_20_25/EmergingApproaches_Ecomod/Ecorest_cert/Git_ecorest/ecorest-pkg-update2/R"
 # Update for local functions - Kiara
-ecorest_update_path <- "E:/ecorest/ecorest package/ecorest_2.0.3/ecorest/R"
+#ecorest_update_path <- "E:/ecorest/ecorest package/ecorest_2.0.3/ecorest/R"
 
-source(file.path(ecorest_update_path, "HSIplotter.R"))
-source(file.path(ecorest_update_path, "SIcalc.R"))
-source(file.path(ecorest_update_path, "HSIarimean.R"))
-source(file.path(ecorest_update_path, "HSIgeomean.R"))
-source(file.path(ecorest_update_path, "HSIwarimean.R"))
-source(file.path(ecorest_update_path, "HSImin.R"))
-source(file.path(ecorest_update_path, "HSIeqtn.R"))
-source(file.path(ecorest_update_path, "HUcalc.R"))
-source(file.path(ecorest_update_path, "annualizer.R"))
-source(file.path(ecorest_update_path, "CEfinder.R"))
-source(file.path(ecorest_update_path, "BBfinder.R"))
-source(file.path(ecorest_update_path, "CEICAplotter.R"))
+#source(file.path(ecorest_update_path, "HSIplotter.R"))
+#source(file.path(ecorest_update_path, "SIcalc.R"))
+#source(file.path(ecorest_update_path, "HSIarimean.R"))
+#source(file.path(ecorest_update_path, "HSIgeomean.R"))
+#source(file.path(ecorest_update_path, "HSIwarimean.R"))
+#source(file.path(ecorest_update_path, "HSImin.R"))
+#source(file.path(ecorest_update_path, "HSIeqtn.R"))
+#source(file.path(ecorest_update_path, "HUcalc.R"))
+#source(file.path(ecorest_update_path, "annualizer.R"))
+#source(file.path(ecorest_update_path, "CEfinder.R"))
+#source(file.path(ecorest_update_path, "BBfinder.R"))
+#source(file.path(ecorest_update_path, "CEICAplotter.R"))
+
+#Check what version of SIcalc is rendering:
+#cat("SIcalc environment:", environmentName(environment(SIcalc)), "\n")
+#print(SIcalc)
 
 ```
 
@@ -452,22 +455,34 @@ To confirm proper functionality, the `ecorest` package was rigorously assessed a
 *Error reporting*: To communicate issues to users and reviewers, functions in `ecorest` were designed to generate error messages in the event of incorrect inputs or user errors. Common error messages in `ecorest` include 'incorrect number of input' errors, 'out of range' errors, and errors regarding incorrect formatting.
 
 Examples of some error messages associated with various `ecorest` functions:
-```{r echo = TRUE, eval = FALSE}
+```{r echo = TRUE, message=TRUE, warning=TRUE, eval = FALSE}
 
-# Produce an error if user inputs for HSIarimean are not between zero and one
-if (any(x < 0 | x > 1, na.rm = TRUE)) {
-  stop("Suitability indices must be between 0 and 1.", call. = FALSE)
-  }
+x <- c(0.2, 0.6, 1.4)
 
 # Produce an error if a user enters unequal number of weights and suitability indices in HSIwarimean
-if (length(w) != length(x)) {
-  stop("Number of weights does not equal number of suitability indices.", call. = FALSE)
-}
+
+tryCatch({
+  if (any(x < 0 | x > 1, na.rm = TRUE)) {
+    stop("Suitability indices must be between 0 and 1.", call. = FALSE)
+  }
+}, error = function(e) {
+  message("Error: ", e$message)
+})
 
 # Produce an error if duplicate time intervals are detected in annualizer
-if (any(duplicated(timevec))) {
-  stop("Duplicate time intervals detected.", call. = FALSE)
+timevec <- c(0, 1, 2, 2, 3)
+
+tryCatch({
+  if (any(duplicated(timevec))) {
+    dup_times <- unique(timevec[duplicated(timevec)])
+    stop(
+      paste0("Duplicate time intervals detected: ", paste(dup_times, collapse = ", "), "."),
+      call. = FALSE
+    )
   }
+}, error = function(e) {
+  message("Error: ", e$message)
+})
 
 ```
 
@@ -891,7 +906,11 @@ HSIplotter(MNK.model, "MNK.jpeg")
 
 ***Step 3:*** Use `SIcalc()` to calculate suitability indices for all species.
 
-```{r echo=TRUE}
+```{r, echo=TRUE}
+#check what version of SIcalc is rendering
+cat("SIcalc environment at Step 3:", environmentName(environment(SIcalc)), "\n")
+print(SIcalc)
+      
 # Pileated Woodpecker
 input.PW <- PW[, 2:8]
 nPW <- nrow(input.PW)
@@ -939,7 +958,7 @@ for(i in 1:nMNK){
 ```
 
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 SI.summary.E1 <- data.frame(
   Site = site.names,
   
@@ -1008,7 +1027,7 @@ for(i in 1:nMNK){
 
 ```
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 HSI.summary.E1 <- data.frame(
   Site = site.names,
   PW = round(HSI.PW[, 1], 2),
@@ -1031,15 +1050,13 @@ The example below reads in the San Francisco model input table and field data, p
 
 ***Step 1:*** Load ecorest, model csv file, and model input csv file
 ```{r echo=TRUE}
-#load ecorest package to use HSIplotter and SIcalc() functions
-#library(ecorest)
 
 # Read field inputs and user-specified suitability curves
 marsh.field <- read.csv("SF-TM-HEI_FieldData.csv") # field inputs
 marsh.model <- read.csv("SF-TM-HEI_InputData.csv") #user-specified curves
 ```
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 knitr::kable(
   marsh.field,
   caption = "Table E.2.1.THREM field input data."
@@ -1093,7 +1110,7 @@ knitr::kable(
 ```
 
 ***Step 4:*** Use user-specified HSI equation and HUcalc() to quantify HSIs and habitat units for each alternative.
-```{r echo=TRUE}
+```{r, echo=TRUE}
 # Calculate habitat quality and habitat units
 marsh.HU <- do.call(rbind, lapply(1:nmarsh, function(i) {
   HUcalc(
@@ -1107,7 +1124,7 @@ marsh.HU <- do.call(rbind, lapply(1:nmarsh, function(i) {
 
 
 ![Figure E.2.2. Tidal Habitats and Resilience Evaluation Model HSI Equation](THREM_model_equation.jpg)
-```{r echo=FALSE}
+```{r, echo=FALSE}
 # Final output table
 final.marsh <- data.frame(
   Alternative = marsh.field$Alternatives,
@@ -1133,7 +1150,7 @@ This example demonstrates how `ecorest` can be used to compare habitat restorati
 
 ***Step 1:*** Define the alternatives, time horizon, and habitat outputs over time.
 
-```{r echo=TRUE}
+```{r, echo=TRUE}
 
 
 altnames <- c("FWOP", "Alt A", "Alt B", "Alt C")
@@ -1153,7 +1170,7 @@ cost <- c(0.0, 4.5, 9.0, 18.5)
 ```
 
 ***Step 2:*** Convert time-varying habitat outputs to average annual habitat units using `annualizer()`.
-```{r echo=TRUE}
+```{r, echo=TRUE}
 benefit <- c(
   annualizer(timevec, FWOP),
   annualizer(timevec, AltA),
@@ -1163,7 +1180,7 @@ benefit <- c(
 
 ```
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 Table.E2.inputs <- data.frame(
   Alternative = altnames,
   Annualized_Benefit = round(benefit, 2),
@@ -1177,7 +1194,7 @@ knitr::kable(
 ```
 
 ***Step 3:*** Conduct the cost-effectiveness and incremental cost analyses.
-```{r echo=TRUE}
+```{r, echo=TRUE}
 CE.E2 <- CEfinder(benefit, cost)
 BB.E2 <- BBfinder(benefit, cost, CE.E2)
 
@@ -1204,7 +1221,7 @@ knitr::kable(
 ```
 
 ***Step 4:*** Plot the CEICA results with `CEICAplotter()`.
-```{r echo=TRUE}
+```{r, echo=TRUE}
 CEICAplotter(
   altnames,
   benefit,
@@ -1222,7 +1239,7 @@ This example builds directly on Steps 1–4 from Example E.1. In that previous e
 
 ***Step 5:*** Assign restoration acreage to each site and calculate habitat units for each taxon.
 
-```{r echo=TRUE}
+```{r, echo=TRUE}
 # Hypothetical restoration acreage by site
 acres <- c(120, 175, 240, 300, 210, 160)
 # Calculate habitat units for each taxon at each site
@@ -1260,7 +1277,7 @@ cost <- c(3.5, 6.0, 8.8, 14.0, 10.2, 7.1)
 
 ```
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 
 Benefit.summary.E3 <- data.frame(
   Site = site.names,
@@ -1292,7 +1309,7 @@ for(i in 1:nrow(BB.E3[[2]])){
 
 ```
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 # Create summary table for incremental cost analysis
 Table.E3 <- data.frame(
   Site = bestbuy.names,
@@ -1324,57 +1341,3 @@ CEICAplotter(
 This example extends the HSI results from Example E.1 into a restoration planning context by converting habitat quality into habitat units and comparing total ecological outputs against project costs. The resulting CEICA summarizes how sites differ in both total habitat benefit and incremental cost.
 
 
-## **Appendix F: USACE Model Certification Review**
-
-Review comments were received on XXX. All comments follow the four-part comment structure of: (1) identify the problem, (2) describe the technical basis for the comment, (3) rate the significance or impact of the problem, and (4) recommend a mechanism for resolution.
-
-
-#### *F.1. Reviewer 1 (John Smith, USACE XXX District)*  
-
-*Comment 1.1: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
-
-*Comment 1.2: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
-
-
-#### *F.2. Reviewer 2 (Jane Smith, USACE YYY District)*  
-
-*Comment 2.1: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
-
-*Comment 2.2: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
-
-
-#### *F.3. Reviewer 3 (John Smith, USACE YYY District)*  
-
-*Comment 3.1: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
-
-*Comment 3.2: Insert.*  
-
-* Basis: Insert.  
-* Significance: Insert.  
-* Resolution: Insert.  
-* Author Response: Insert.
