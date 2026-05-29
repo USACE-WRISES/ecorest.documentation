@@ -175,22 +175,26 @@ The [ecorest package page](https://CRAN.R-project.org/package=ecorest) is distri
 
 #### *3.1. USFWS Habitat Suitability Model Data*  
 
-The `ecorest` package includes a compiled library of USFWS HSI models implemented in a standardized digital format to improve accessibility, reduce transcription error, and support repeatable computations. The data structures presented in **Section 3.1** store the curve breakpoints and coding conventions needed to reconstruct published suitability relationships, while model metadata document model details (e.g., geographic range, scientific name), intended application context, and citation information. Together, these datasets provide the inputs required for the index model calculations described in **Section 3.2**.
+The `ecorest` package includes a compiled library of USFWS HSI models implemented in a standardized digital format to improve accessibility, reduce transcription error, and support repeatable computations. The data structures presented in **Section 3.1** store the curve breakpoints and coding conventions needed to reconstruct published suitability relationships, while model metadata document model details (e.g., geographic range, scientific name), intended application context, and citation information. Together, these datasets provide the inputs required for the index model calculations described in 
+**Section 3.2**.
 
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSI$modelname
+</p>
 
-*`HSImodels$modelname`*
+`HSImodels$modelname` is a list of data frames that contains 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models approved for USACE use by the Ecosystem Planning Center of Expertise (ECO-PCX). Each data frame contains independent variables and associated habitat suitability indices (ranging from zero to one). Data represent known breakpoints in curves, and linear extrapolation is used to define values between breakpoints. Categorical input variables are coded as letters. A comprehensive list of all models is included in Appendix B. Variable names often required abbreviation, and all nomenclature is also summarized in Appendix B. Table 2 provides an example of one such HSI model designed for the Barred Owl (*Strix varia*) (Allen 1987). All models can be called with their corresponding model name using `HSImodels$modelname` (e.g., `HSImodels$barredowl`).
 
-This list of data frames contains 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models approved for USACE use by the Ecosystem Planning Center of Expertise (ECO-PCX). Each data frame contains independent variables and associated habitat suitability indices (ranging from zero to one). Data represent known breakpoints in curves, and linear extrapolation is used to define values between breakpoints. Categorical input variables are coded as letters. A comprehensive list of all models is included in Appendix B. Variable names often required abbreviation, and all nomenclature is also summarized in Appendix B. Table 2 provides an example of one such HSI model designed for the Barred Owl (*Strix varia*) (Allen 1987). All models can be called with their corresponding model name using `HSImodels$modelname` (e.g., `HSImodels$barredowl`).
-
-```{r}
+```{r echo=FALSE}
 Table2 <- HSImodels$barredowl
 knitr::kable(Table2, caption="**Table 2. Example of USFWS Habitat Suitability Model Data for the Barred Owl (*Strix varia*) (Allen 1987).**")
 
 ```
 
-*`HSImetadata`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSImetadata
+</p>
 
-This data frame contains metadata for 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models, such as model names, references, input parameters, and model equations. Table 3 provides a full list of all fields contained within `HSImetadata` along with an example for the Barred Owl model (Allen 1987).
+`HSImetadata` is a data frame that contains metadata for 349 U.S. Fish and Wildlife Service Habitat suitability index (HSI) models, such as model names, references, input parameters, and model equations. Table 3 provides a full list of all fields contained within `HSImetadata` along with an example for the Barred Owl model (Allen 1987).
 
 ```{r echo=FALSE}
 # Variable descriptions from R-package
@@ -217,8 +221,9 @@ knitr::kable(Table3, caption="**Table 3. Example of model information embedded w
 
 The index model computational engine in `ecorest` is implemented as a modular workflow that separates (1) representation and visualization of suitability relationships, (2) calculation of suitability indices from project inputs from USFWS models (**Section 3.1**) or user-specified models, (3) calculation of suitability indices into an overall HSI score using documented combination rules, and (4) conversion of HSI to habitat units using habitat quantity and HSI scores. This modular structure promotes computational transparency, supports verification against known outcomes, and allows functions to be used independently when only part of the workflow is needed.
 
-
-*`HSIplotter(SI, figure.name)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSIplotter
+</p>
 
 The `HSIplotter` function plots suitability index curves relative to HSI model input parameters. 
 
@@ -238,9 +243,10 @@ HSIplotter(HSImodels$barredowl, "Fig02.BarredOwl.jpeg")
 
 ![**Figure 2. Example output from `HSIplotter()` for the Barred Owl HSI model (Allen 1987).**](Fig02.BarredOwl.jpeg)
 
-<br>
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+SIcalc(SI, input.proj)
+</p>
 
-*`SIcalc(SI, input.proj)`*
 
 The `SIcalc` function computes suitability indices given a set of suitability curves and project-specific inputs. Suitability indices may be computed based on either linear interpolation (for continuous variables) or a look-up method (for categorical variables). 
 
@@ -257,8 +263,9 @@ SIcalc
 
 ```
 
-
-*`HSIarimean(x)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSIarimean(x)
+</p>
 
 The `HSIarimean` function uses an arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
 
@@ -272,8 +279,9 @@ The `HSIarimean` function returns a value of habitat quality between zero and on
 HSIarimean
 ```
 
-
-*`HSIwarimean(x, w)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSIwarimean(x, w)
+</p>
 
 The `HSIwarimean` function uses a weighted arithmetic mean equation to combine suitability indices into an overarching habitat suitability index.
 
@@ -289,8 +297,9 @@ The `HSIwarimean` function returns a value of habitat quality between zero and o
 HSIwarimean
 ```
 
-
-*`HSIgeomean(x)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSIgeomean(x)
+</p>
 
 The `HSIgeomean` function uses a geometric mean equation to combine suitability indices into an overarching habitat suitability index.
 
@@ -305,8 +314,9 @@ The `HSIgeomean` function returns a value of habitat quality between zero and on
 HSIgeomean
 ```
 
-
-*`HSImin(x)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSImin(x)
+</p>
 
 The `HSImin` function calculates the minimum of a given set of suitability indices to determine an overarching habitat suitability index.
 
@@ -321,8 +331,9 @@ The `HSImin` function returns a value of habitat quality between zero and one (i
 HSImin
 ```
 
-
-*`HSIeqtn(HSImodelname, SIV, HSImetadata, exclude)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HSIeqtn(HSImodelname, SIV, HSImetadata, exclude)
+</p>
 
 The `HSIeqtn` function computes a habitat suitability index based on equations specified in USFWS habitat suitability models contained within `ecorest` via `HSImodels` and `HSImetadata`. Habitat suitability indices represent an overall assessment of habitat quality from combining individual suitability indices for multiple independent variables. The function computes an overall habitat suitability index. This function only applies to built-in index models described in Section 3.1.
 
@@ -340,8 +351,9 @@ The `HSIeqtn` function returns a numeric estimate of habitat quality between zer
 HSIeqtn
 ```
 
-
-*`HUcalc(SI.out, habitat.quantity, HSIfunc, ...)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+HUcalc(SI.out, habitat.quantity, HSIfunc, ...)
+</p>
 
 The `HUcalc` function computes habitat units given a set of suitability indices ranging from zero to one, a habitat suitability index equation, and habitat quantity.
 
@@ -364,8 +376,9 @@ HUcalc
 
 This section documents the decision support functions in `ecorest` used to compare restoration alternatives when benefits are non-monetary and costs are monetary (or otherwise expressed in different units). The functions implement standard cost-effectiveness and incremental cost analysis concepts by (1) converting time-varying outcomes to time-averaged metrics when needed, (2) identifying cost-effective alternatives that form the efficient frontier, (3) evaluating incremental trade-offs along that frontier to identify “best buys,” and (4) producing standardized tabular and graphical summaries for interpretation and reporting.
 
-
-*`annualizer(timevec, benefits)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+annualizer(timevec, benefits)
+</p>
 
 The `annualizer` function computes time-averaged quantities based on linear interpolation.
 
@@ -380,8 +393,9 @@ The `annualizer` function returns a time-averaged value over the specified time 
 annualizer
 ```
 
-
-*`CEfinder(benefit, cost)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+CEfinder(benefit, cost)
+</p>
 
 The `CEfinder` function returns cost-effectiveness analysis for a particular set of alternatives.
 
@@ -397,8 +411,9 @@ The `CEfinder` function returns a numeric vector identifying each plan as cost-e
 CEfinder
 ```
 
-
-*`BBfinder(benefit, cost, CE)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+BBfinder(benefit, cost, CE)
+</p>
 
 The `BBfinder` function examines the slope of the cost-effectiveness frontier to isolate how unit cost (cost/benefit) increases with increasing environmental benefit. Restoration actions with the lowest slope of unit cost are considered "best buys."
 
@@ -415,8 +430,9 @@ The `BBfinder` function returns a list with summaries of all restoration actions
 BBfinder
 ```
 
-
-*`CEICAplotter(altnames, benefit, cost, CE, BB, figure.name)`*
+<p style="font-size: 1.2em; font-style: italic; margin-top: 1em; margin-bottom: 0.5em;">
+CEICAplotter(altnames, benefit, cost, CE, BB, figure.name)
+</p>
 
 The `CEICAplotter` function plots summary outputs of Cost-effective Incremental Cost Analysis (CEICA) in *.jpeg format.
 
@@ -455,7 +471,7 @@ To confirm proper functionality, the `ecorest` package was rigorously assessed a
 *Error reporting*: To communicate issues to users and reviewers, functions in `ecorest` were designed to generate error messages in the event of incorrect inputs or user errors. Common error messages in `ecorest` include 'incorrect number of input' errors, 'out of range' errors, and errors regarding incorrect formatting.
 
 Examples of some error messages associated with various `ecorest` functions:
-```{r echo = TRUE, message=TRUE, warning=TRUE, eval = FALSE}
+```{r echo = TRUE, message=TRUE, warning=TRUE}
 
 x <- c(0.2, 0.6, 1.4)
 
@@ -904,59 +920,71 @@ HSIplotter(MNK.model, "MNK.jpeg")
 
 ![Figure E.1.4. Mink (lacustrine model) suitability curves.](MNK.jpeg)
 
+<br>
 ***Step 3:*** Use `SIcalc()` to calculate suitability indices for all species.
 
-```{r, echo=TRUE}
-#check what version of SIcalc is rendering
-cat("SIcalc environment at Step 3:", environmentName(environment(SIcalc)), "\n")
-print(SIcalc)
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
       
+
 # Pileated Woodpecker
 input.PW <- PW[, 2:8]
 nPW <- nrow(input.PW)
 SI.PW <- matrix(NA, nrow = nPW, ncol = 7)
-colnames(SI.PW) = colnames(input.PW)
+colnames(SI.PW) <- colnames(input.PW)
 
 for(i in 1:nPW){
-  SI.PW[i, ] <- SIcalc(PW.model, input.PW[i, ])
+  SI.PW[i, ] <- suppressWarnings(
+    SIcalc(PW.model, input.PW[i, ])
+  )
 }
 
 # Barred Owl
 input.BO <- BO[, 2:4]
 nBO <- nrow(input.BO)
 SI.BO <- matrix(NA, nrow = nBO, ncol = 3)
-colnames(SI.BO) = colnames(input.BO)
+colnames(SI.BO) <- colnames(input.BO)
 
 for(i in 1:nBO){
-  SI.BO[i, ] <- SIcalc(BO.model, input.BO[i, ])
+  SI.BO[i, ] <- suppressWarnings(
+    SIcalc(BO.model, input.BO[i, ])
+  )
 }
 
 # Gray Squirrel
 input.GS <- GS[, 2:6]
 nGS <- nrow(input.GS)
 SI.GS <- matrix(NA, nrow = nGS, ncol = 5)
-colnames(SI.GS) = colnames(input.GS)
+colnames(SI.GS) <- colnames(input.GS)
 
 for(i in 1:nGS){
-  SI.GS[i, ] <- SIcalc(GS.model, input.GS[i, ])
+  SI.GS[i, ] <- suppressWarnings(
+    SIcalc(GS.model, input.GS[i, ])
+  )
 }
 
 # Mink
 MNK.model <- HSImodels$minkRivLac
 MNK.model[] <- lapply(MNK.model, function(x) type.convert(as.character(x), as.is = TRUE))
+
 input.MNK <- MNK[, 2:7]
 nMNK <- nrow(input.MNK)
 SI.MNK <- matrix(NA, nrow = nMNK, ncol = 6)
-colnames(SI.MNK) = colnames(input.MNK)
-
+colnames(SI.MNK) <- colnames(input.MNK)
 
 for(i in 1:nMNK){
-  SI.MNK[i, ] <- SIcalc(MNK.model, input.MNK[i, ])
+  SI.MNK[i, ] <- suppressWarnings(
+    SIcalc(MNK.model, input.MNK[i, ])
+  )
 }
-
 
 ```
 
+```{r, echo=FALSE, warning=TRUE, message=FALSE}
+warning(
+  "U.S. Army Corps of Engineers users must have approval from the National Ecosystem Planning Center of Expertise (Eco-PCX) prior to application of a new model.",
+  call. = FALSE
+)
+```
 
 ```{r, echo=FALSE}
 SI.summary.E1 <- data.frame(
@@ -1081,7 +1109,7 @@ HSIplotter(marsh.model, "marsh.plot.jpeg")
 ```
 ![Figure E.2.1. Tidal Habitats and Resilience Evaluation Model](marsh.plot.jpeg)
 ***Step 3:*** Use SIcalc() to calculate SI units.
-```{r echo=TRUE}
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 # Extract alternative input values
 input.marsh <- marsh.field[, 2:5]
 nmarsh <- nrow(input.marsh)
@@ -1092,6 +1120,12 @@ SI.marsh <- matrix(NA, nrow = nmarsh, ncol = 4)
 for(i in 1:nmarsh){
   SI.marsh[i, ] <- SIcalc(marsh.model, as.character(input.marsh[i, ]))
 }
+```
+```{r, echo=FALSE, warning=TRUE, message=FALSE}
+warning(
+  "U.S. Army Corps of Engineers users must have approval from the National Ecosystem Planning Center of Expertise (Eco-PCX) prior to application of a new model.",
+  call. = FALSE
+)
 ```
 
 ```{r echo=FALSE}
@@ -1110,7 +1144,7 @@ knitr::kable(
 ```
 
 ***Step 4:*** Use user-specified HSI equation and HUcalc() to quantify HSIs and habitat units for each alternative.
-```{r, echo=TRUE}
+```{r, echo=TRUE,warning=FALSE, message=FALSE}
 # Calculate habitat quality and habitat units
 marsh.HU <- do.call(rbind, lapply(1:nmarsh, function(i) {
   HUcalc(
@@ -1121,7 +1155,12 @@ marsh.HU <- do.call(rbind, lapply(1:nmarsh, function(i) {
 }))
 
 ```
-
+```{r, echo=FALSE, warning=TRUE, message=FALSE}
+warning(
+  "U.S. Army Corps of Engineers users must have approval from the National Ecosystem Planning Center of Expertise (Eco-PCX) prior to application of a new model.",
+  call. = FALSE
+)
+```
 
 ![Figure E.2.2. Tidal Habitats and Resilience Evaluation Model HSI Equation](THREM_model_equation.jpg)
 ```{r, echo=FALSE}
